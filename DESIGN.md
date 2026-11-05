@@ -53,7 +53,7 @@ One family (Geist). Five roles only. A component uses at most three of them.
 
 | Role | Size / line | Weight | Colour | Used for |
 |---|---|---|---|---|
-| Display | dot-matrix | n/a | ink | wordmark only |
+| Display | dot-matrix | n/a | ink | wordmark and section titles (48px tall); the text stays for screen readers |
 | Title | 40 / 48 | 500 | ink | section titles, page titles |
 | Heading | 20 / 28 | 500 | ink | names of things: artifacts, people, news items |
 | Body | 17 / 28 | 400 | ink | sentences |
