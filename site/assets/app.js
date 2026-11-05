@@ -3,7 +3,7 @@
    1. Dot-matrix type (wordmark, monograms) rendered as SVG.
    2. Nav state; resource sets that show only public links.
    3. News from config.js; team and institutions from team.js.
-   4. Dot-matrix display cycling through the loop (See, Seek, Reason, Evolve), synced with the step list.
+   4. Dot-matrix display cycling through the pathway (Understand, Seek, Evolve).
    5. Product emblems; monograms that boot dot by dot; system diagram with travelling packets.
    6. Vital trace. */
 (() => {
@@ -35,6 +35,11 @@
     r: [".....", ".....", "#.##.", "##..#", "#....", "#....", "#...."], s: [".....", ".....", ".####", "#....", ".###.", "....#", "####."],
     v: [".....", ".....", "#...#", "#...#", "#...#", ".#.#.", "..#.."], w: [".....", ".....", "#...#", "#...#", "#.#.#", "#.#.#", ".#.#."],
     y: [".....", ".....", "#...#", "#...#", "#...#", ".####", "....#", ".###."],
+    b: ["#....", "#....", "####.", "#...#", "#...#", "#...#", "####."], d: ["....#", "....#", ".####", "#...#", "#...#", "#...#", ".####"],
+    h: ["#....", "#....", "####.", "#...#", "#...#", "#...#", "#...#"], l: [".##..", "..#..", "..#..", "..#..", "..#..", "..#..", ".###."],
+    p: [".....", ".....", "####.", "#...#", "#...#", "####.", "#....", "#...."], u: [".....", ".....", "#...#", "#...#", "#...#", "#..##", ".##.#"],
+    1: ["..#..", ".##..", "..#..", "..#..", "..#..", "..#..", ".###."], 2: [".###.", "#...#", "....#", "...#.", "..#..", ".#...", "#####"],
+    3: [".###.", "#...#", "....#", "..##.", "....#", "#...#", ".###."],
     " ": [".....", ".....", ".....", ".....", ".....", ".....", "....."]
   };
   const ROWS = 8;
@@ -101,6 +106,21 @@
     el.innerHTML = html;
   });
 
+  /* ---------- Pathway gauge: from general to surgical competence ----------
+     One dot per step of the track; dots up to the current position are lit, the head blinks. */
+  const gauge = document.getElementById("gauge");
+  if (gauge) {
+    const W = 1152, GAP = 12, n = Math.floor(W / GAP), at = +gauge.dataset.progress || 0;
+    const head = Math.round((n - 1) * at), stations = [0, Math.round(n / 3), Math.round(2 * n / 3)];
+    let dotsSvg = "";
+    for (let i = 0; i < n; i++) {
+      const st = stations.includes(i), cls = i < head ? "lit" : i === head ? "head" : "off";
+      dotsSvg += `<circle class="${cls}${st ? " st" : ""}" cx="${i * GAP + GAP / 2}" cy="12" r="${st ? 5 : 2.6}"/>`;
+    }
+    gauge.setAttribute("viewBox", `0 0 ${W} 24`);
+    gauge.innerHTML = dotsSvg;
+  }
+
   /* ---------- Footer: contact from config.js, current year ---------- */
   const mail = typeof V.contact === "string" && /^[^\s@]+@[^\s@]+$/.test(V.contact) ? V.contact : null;
   document.querySelectorAll("[data-contact]").forEach((row) => {
@@ -166,7 +186,7 @@
   const loop = document.getElementById("steps");
   if (mx) {
     const ctx = mx.getContext("2d"), css = getComputedStyle(document.documentElement);
-    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["See", "Seek", "Reason", "Evolve"], lines = ["surgical video", "surgical knowledge", "over evidence", "from its own trajectories"];
+    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["Understand", "Seek", "Evolve"], lines = ["Can a general model understand surgery?", "Can an agent seek what it lacks?", "Can it evolve toward competence?"];
     const cells = [];
     for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
       const x = i - R, y = j - R;
@@ -175,7 +195,7 @@
     // Levels: 0 off, 1 brand, 2 signal (live), 3 faint
     const near = (a, b, w) => Math.abs(a - b) < w;
     const scenes = [
-      (x, y, t) => { // See: an eye that looks around
+      (x, y, t) => { // Understand: an eye that looks around
         const half = 7.2 * (1 - (x / 13.5) ** 2), px = 4 * Math.sin(t * 1.3), py = 1.2 * Math.sin(t * 0.7);
         if (Math.abs(x) <= 13.5 && near(Math.abs(y), half, 0.62)) return 1;
         const d = Math.hypot(x - px, y - py);
@@ -191,21 +211,6 @@
         if (line) return d < 5.6 ? 2 : 3;
         return 0;
       },
-      (() => { // Reason: a signal travels through a graph of evidence
-        const P = [[-10, -4], [-4, -10], [-3, 1], [4, -5], [10, -1], [3, 8], [-8, 7]];
-        const E = [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [2, 5], [5, 4], [6, 2], [6, 5]];
-        const path = [6, 2, 3, 4, 5, 2, 0, 1, 3];
-        const seg = (x, y, a, b) => { const [ax, ay] = P[a], [bx, by] = P[b], dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
-          const u = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / L)); return Math.hypot(x - ax - u * dx, y - ay - u * dy); };
-        return (x, y, t) => {
-          const k = (t * 1.6) % (path.length - 1), i = Math.floor(k), f = k - i, a = P[path[i]], b = P[path[i + 1]];
-          const sx = a[0] + (b[0] - a[0]) * f, sy = a[1] + (b[1] - a[1]) * f;
-          if (Math.hypot(x - sx, y - sy) < 1.3) return 2;
-          for (const [qx, qy] of P) if (Math.hypot(x - qx, y - qy) < 1.75) return 1;
-          for (const [u, v] of E) if (seg(x, y, u, v) < 0.5) return 3;
-          return 0;
-        };
-      })(),
       (x, y, t) => { // Evolve: a turning double helix (each strand drawn as a continuous run of dots)
         if (Math.abs(x) > 13) return 0;
         const A = 6.5, k = 0.3, w = t * 1.8, f = (u) => A * Math.sin(u * k + w);
@@ -245,7 +250,7 @@
     new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(mx);
     function tick(now) {
       if (visible && now - lastDraw > 66) { // ~15 fps: stepwise, like an instrument display
-        if (now - lastStepAt > STEP_MS) setStep((step + 1) % 4, now);
+        if (now - lastStepAt > STEP_MS) setStep((step + 1) % scenes.length, now);
         draw(now); lastDraw = now;
       }
       requestAnimationFrame(tick);

@@ -203,10 +203,11 @@ Title, optional one-sentence lead, one module. Nothing else.
 
 ### 5.2 Home page
 1. **Nav**: wordmark left, section links right. No border; it gains a raised surface only once the page scrolls.
-2. **Concept**: wordmark, claim ("Surgical Intelligence"), one sentence; dot-matrix display; vital trace with the *vīta* readout.
-3. **News**: up to five items.
-4. **Artifacts**: system diagram, then the entities.
-5. **Team**: filter, then people.
+2. **Concept**: wordmark, claim ("Surgical Intelligence"), one sentence; dot-matrix display cycling Understand, Seek, Evolve; vital trace with the *vīta* and *agent* entries.
+3. **Pathway**: the research motivation as three questions, in order. A gauge from general model to surgical competence shows how far we are; each question has one sentence, the products that answer it and its status. Numbers are allowed here because the order is the point.
+4. **News**: up to five items.
+5. **Artifacts**: product cards, then the system map.
+6. **Team**: filter, then people.
 
 ### 5.3 Project page
 Title, one sentence, resource set, then sections that each hold one module (figure, takeaways, viewer).

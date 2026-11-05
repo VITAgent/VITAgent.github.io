@@ -115,6 +115,26 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .dict dd i { color: var(--muted); margin-right: 8px; }
 @media (max-width: 640px) { .vitals { grid-template-columns: 1fr; gap: 16px; } .dict { grid-template-columns: 1fr 1fr; } }
 
+/* Pathway */
+.gauge { margin-bottom: 48px; }
+.gauge svg { width: 100%; height: auto; display: block; }
+.gauge .off { fill: var(--dot-off); }
+.gauge .lit { fill: var(--brand); }
+.gauge .head { fill: var(--signal); animation: pulse-a 1.2s linear infinite; }
+.gauge .st.off { fill: var(--faint); }
+.gauge-ends { display: flex; justify-content: space-between; margin-top: 8px; font-size: 15px; color: var(--muted); }
+.path { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr; gap: 48px; }
+@media (min-width: 900px) { .path { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
+.path li { display: flex; flex-direction: column; }
+.dm.dm-num { width: auto; margin-bottom: 20px; color: var(--brand); }
+.dm.dm-num svg { height: 40px; width: auto; }
+.path li.now .dm-num { color: var(--signal); }
+.path h3 { font-size: 22px; line-height: 30px; max-width: 22ch; }
+.path .desc { margin-top: 12px; color: var(--muted); max-width: 40ch; }
+.path .by { margin-top: auto; padding-top: 20px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 15px; }
+@media (max-width: 640px) { .gauge-ends { font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { .gauge .head { animation: none; } }
+
 /* Sections: separated by space only */
 .sec { padding-top: var(--sec); }
 
