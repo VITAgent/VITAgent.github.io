@@ -21,6 +21,7 @@ window.VITAGENT_TEAM = {
 
   people: [
     { name: "Gengyuan Zhang",   role: "Team lead", affiliations: ["lmu"],            url: null, photo: null },
+    { name: "Jingpei Wu",       role: null, affiliations: ["lmu"],            url: null, photo: null },
     { name: "Shijie Zhou",      role: null, affiliations: ["tum"],            url: null, photo: null },
     { name: "Xinling Xie",      role: null, affiliations: ["lmu"],            url: null, photo: null },
     { name: "Xiao Han",         role: null, affiliations: ["lmu"],            url: null, photo: null },
