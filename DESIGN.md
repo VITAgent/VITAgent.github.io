@@ -85,7 +85,7 @@ The jump from 48 to 128 is what separates sections. No line is needed.
 | ink | #1c2426 | #e6ecec | primary text |
 | muted | #5f6b6e | #93a1a4 | meta text only |
 | brand (drape teal) | #0e6b65 | #3fb1a6 | interactive and selected things |
-| signal | #d93a46 | #ff5c66 | live only: trace head, newest item |
+| signal | #d93a46 | #ff5c66 | live only: trace head, newest item, and VITA (life) in the wordmark; in the hero the shared A blinks |
 
 Colour is never the only carrier of meaning: affiliations use shapes, status uses words.
 

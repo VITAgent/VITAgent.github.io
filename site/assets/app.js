@@ -38,11 +38,13 @@
     let lit = "", off = "";
     glyphs.forEach((g, i) => {
       const x0 = i * (5 + gap);
+      let mine = "";
       for (let y = 0; y < rows; y++) for (let x = 0; x < 5 + (i < glyphs.length - 1 ? gap : 0); x++) {
         const on = x < 5 && g[y] && g[y][x] === "#";
         const c = `<circle cx="${x0 + x + 0.5}" cy="${y + 0.5}" r="${r}"/>`;
-        if (on) lit += c; else if (opts.grid) off += c;
+        if (on) mine += c; else if (opts.grid) off += c;
       }
+      lit += `<g class="gl" data-i="${i}">${mine}</g>`; // one group per letter, so single letters can be styled
     });
     return `<svg viewBox="0 0 ${w} ${rows}" role="img" aria-label="${esc(opts.label || text)}"><g class="dot-off">${off}</g><g class="dot-on">${lit}</g></svg>`;
   }
