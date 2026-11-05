@@ -341,9 +341,13 @@
       { d: "M260 348 V362 H680", label: "trajectories", lx: 290, ly: 388, live: true },
       { d: "M790 320 V240", label: "next version", lx: 804, ly: 284 }
     ];
-    let html = "";
+    // Dot textures for the regions: the same dot language as the rest of the page, kept fine enough to read through.
+    let html = `<defs>` +
+      `<pattern id="pd" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pd"/></pattern>` +
+      `<pattern id="pdm" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pdm"/></pattern>` +
+      `<pattern id="pdh" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.5" class="pdh"/></pattern></defs>`;
     R.forEach((r) => {
-      html += `<g class="reg${r.room ? " room" : ""}${r.minor ? " minor" : ""}" data-r="${r.id}"><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/>` +
+      html += `<g class="reg${r.room ? " room" : ""}${r.minor ? " minor" : ""}" data-r="${r.id}"><rect class="base" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/><rect class="tex" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/>` +
         `<text class="rn" x="${r.x + 20}" y="${r.y + 34}">${esc(r.name)}</text></g>`;
     });
     E.forEach((e, i) => { html += `<path id="sx${i}" class="edge" d="${e.d}"/>` + (e.label ? `<text class="el" x="${e.lx}" y="${e.ly}">${esc(e.label)}</text>` : ""); });

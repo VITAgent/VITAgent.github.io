@@ -152,7 +152,7 @@ A row of chips. Chip = optional mark + label + count in muted. Exactly one selec
 ### 3.8 Expressive visuals
 - **Dot-matrix display**: shows the loop (See, Seek, Reason, Evolve). Its own caption names the current step; no separate numbered step list.
 - **Vital trace**: beside two dictionary entries that explain the name. Headword large (*vīta*, *agent*), part of speech in muted italics, definition in body text.
-- **System map**: drawn on the same dot grid; products are windows outlined by lit dots, relations are runs of dots with packets stepping along them. SurgWiki sits inside SurgAgentGym; SurgAgent exchanges actions and observations with the Gym; SurgKnow-Bench sits on top of the Gym as its evaluation layer; trajectories flow to SurgAgentEvolve, which yields the next SurgAgent. Placed below the product cards; hovering a card highlights its region.
+- **System map**: products are tinted regions with a fine dot texture; the Gym is a room outlined by a dense dotted line; relations are dotted lines with packets stepping along them. No background dot field. SurgWiki sits inside SurgAgentGym; SurgAgent exchanges actions and observations with the Gym; SurgKnow-Bench sits on top of the Gym as its evaluation layer; trajectories flow to SurgAgentEvolve, which yields the next SurgAgent. Placed below the product cards; hovering a card highlights its region.
 
 ### 3.9 Interaction states
 

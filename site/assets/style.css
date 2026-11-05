@@ -123,11 +123,20 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 /* Expressive visual: system map. Regions are tinted; dots only on the relations. */
 .system { margin-top: 80px; }
 .system svg { width: 100%; height: auto; display: block; overflow: visible; }
-.system .reg rect { fill: var(--brand-soft); stroke: transparent; stroke-width: 2; transition: fill var(--quick), stroke var(--quick); }
-.system .reg.room rect { fill: none; stroke: var(--brand); stroke-width: 1.5; }
-.system .reg.minor rect { fill: var(--dot-off); }
-.system .reg.hl rect { stroke: var(--brand); }
-.system .reg.room.hl rect { stroke-width: 2.5; }
+.system .reg .base { fill: var(--brand-soft); }
+.system .reg.minor .base { fill: color-mix(in srgb, var(--dot-off) 60%, var(--surface)); }
+.system .reg .tex { fill: url(#pd); }
+.system .pd { fill: var(--brand); opacity: .4; }
+.system .pdm { fill: var(--faint); opacity: .7; }
+.system .pdh { fill: var(--brand); }
+.system .reg.minor .tex { fill: url(#pdm); }
+.system .reg.hl .tex { fill: url(#pdh); }
+.system .reg.room .base { fill: none; }
+.system .reg.room .tex { fill: none; stroke: var(--brand); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0 6; }
+.system .reg.room.hl .tex { stroke-dasharray: 0 4; }
+.system .rn { paint-order: stroke; stroke: var(--brand-soft); stroke-width: 6px; stroke-linejoin: round; }
+.system .reg.room .rn { stroke: var(--surface); }
+.system .reg.minor .rn { stroke: color-mix(in srgb, var(--dot-off) 60%, var(--surface)); }
 .system .rn { font: 500 16px var(--sans); fill: var(--ink); }
 .system .reg.minor .rn { fill: var(--muted); }
 .system .rm, .system .el { font: 400 13px var(--sans); fill: var(--muted); }
