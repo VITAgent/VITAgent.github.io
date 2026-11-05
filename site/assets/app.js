@@ -327,26 +327,26 @@
     const NS = "http://www.w3.org/2000/svg";
     sys.setAttribute("viewBox", "0 0 900 404");
     const R = [
-      { id: "bench",  x: 0,   y: 0,   w: 520, h: 68,  name: "SurgKnow-Bench",  meta: "evaluation on top of the Gym" },
-      { id: "gym",    x: 0,   y: 120, w: 520, h: 228, name: "SurgAgentGym",    meta: "environment", room: true },
-      { id: "video",  x: 24,  y: 200, w: 224, h: 124, name: "Surgical video",  meta: "perceive", minor: true },
-      { id: "wiki",   x: 272, y: 200, w: 224, h: 124, name: "SurgWiki",        meta: "retrieve" },
-      { id: "agent",  x: 680, y: 144, w: 220, h: 96,  name: "SurgAgent",       meta: "agent" },
-      { id: "evolve", x: 680, y: 320, w: 220, h: 84,  name: "SurgAgentEvolve", meta: "self-evolution" }
+      { id: "bench",  x: 0,   y: 0,   w: 520, h: 68,  name: "SurgKnow-Bench" },
+      { id: "gym",    x: 0,   y: 120, w: 520, h: 228, name: "SurgAgentGym", room: true },
+      { id: "video",  x: 24,  y: 200, w: 224, h: 124, name: "Surgical video", minor: true },
+      { id: "wiki",   x: 272, y: 200, w: 224, h: 124, name: "SurgWiki" },
+      { id: "agent",  x: 680, y: 144, w: 220, h: 96,  name: "SurgAgent" },
+      { id: "evolve", x: 680, y: 320, w: 220, h: 84,  name: "SurgAgentEvolve" }
     ];
     const E = [
       { d: "M680 176 H520", label: "actions", lx: 552, ly: 164 },
       { d: "M520 212 H680", label: "observations", lx: 552, ly: 236 },
-      { d: "M260 120 V68", label: "evaluates", lx: 274, ly: 99 },
+      { d: "M260 120 V68", label: "" },
       { d: "M260 348 V362 H680", label: "trajectories", lx: 290, ly: 388, live: true },
       { d: "M790 320 V240", label: "next version", lx: 804, ly: 284 }
     ];
     let html = "";
     R.forEach((r) => {
       html += `<g class="reg${r.room ? " room" : ""}${r.minor ? " minor" : ""}" data-r="${r.id}"><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/>` +
-        `<text class="rn" x="${r.x + 20}" y="${r.y + 32}">${esc(r.name)}</text><text class="rm" x="${r.x + 20}" y="${r.y + 52}">${esc(r.meta)}</text></g>`;
+        `<text class="rn" x="${r.x + 20}" y="${r.y + 34}">${esc(r.name)}</text></g>`;
     });
-    E.forEach((e, i) => { html += `<path id="sx${i}" class="edge" d="${e.d}"/><text class="el" x="${e.lx}" y="${e.ly}">${esc(e.label)}</text>`; });
+    E.forEach((e, i) => { html += `<path id="sx${i}" class="edge" d="${e.d}"/>` + (e.label ? `<text class="el" x="${e.lx}" y="${e.ly}">${esc(e.label)}</text>` : ""); });
     sys.innerHTML = html + `<g id="pk"></g>`;
 
     const pk = sys.querySelector("#pk"), packets = [], GAP = 10;

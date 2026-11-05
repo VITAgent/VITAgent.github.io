@@ -27,6 +27,8 @@ This follows the law of proximity (closeness alone is read as grouping) and the 
 **P2. Every mark carries information.**
 No decorative separators, no eyebrow labels above headings, no small labels that repeat what the content already says, no numbering unless the reader acts on the order. If deleting a mark loses nothing, delete it.
 
+Test before adding any meta line or caption: does it state a fact that is not already visible from the name, the sentence or the structure? A category under a product name ("Environment"), a caption under a region ("evaluation on top of the Gym") or a label on a relation the layout already shows ("evaluates") fails the test. A venue ("NeurIPS 2026") or a role ("Team lead") passes.
+
 **P3. Two registers: quiet and expressive.**
 Text, lists and controls are *quiet*: fast, small, consistent. The three visuals (dot-matrix display, vital trace, system diagram) are *expressive*: they carry the identity and are allowed motion. At most one expressive visual per screenful.
 
@@ -134,7 +136,7 @@ No greyed-out labels, no "Soon" tags.
 Each artifact is an independent product and is shown as one card.
 - Raised surface, 8px radius, no border. All cards in a set have equal height.
 - Emblem: a 15×15 dot-matrix screen with the product's own scene (Bench: bars, Gym: an agent walking between tools, Wiki: an open book being read, Agent: a tool call orbiting a core, Evolve: a double helix). Still at rest; animates while the card is hovered or focused.
-- Heading (name) · Meta (kind, venue or version) · Body (one sentence) · Resource set at the bottom.
+- Heading (name) · Meta only when it adds a fact, such as the venue · Body (one sentence) · Resource set at the bottom.
 - The whole card opens the product's own page. Every product has a page.
 - The current paper's card spans two columns, with a larger emblem beside the text.
 
