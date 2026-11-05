@@ -3,8 +3,9 @@
    1. Dot-matrix type (wordmark, monograms) rendered as SVG.
    2. Links that switch on when config.js has a public URL.
    3. News, team, partners from config.js.
-   4. Scope viewport: a procedural surgical field that resolves from coarse to fine pixels, once.
-   5. Vital trace: the one continuously moving element. */
+   4. Dot-matrix display cycling through the loop (See, Seek, Reason, Evolve), synced with the step list.
+   5. Monograms that boot dot by dot; system diagram with travelling packets.
+   6. Vital trace. */
 (() => {
   const V = window.VITAGENT || { links: {}, news: [], team: [], partners: [] };
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -67,85 +68,127 @@
   if (team) team.innerHTML = V.team.map((m) => {
     const ini = m.name.split(/\s+/).map((p) => p[0]).join("").slice(0, 2).toUpperCase();
     const name = m.url ? `<a href="${esc(m.url)}">${esc(m.name)}</a>` : esc(m.name);
-    return `<li><div class="mono-tile">${dots(ini, { rows: 7, grid: true, label: m.name })}</div><b>${name}</b>${m.role ? `<span>${esc(m.role)}</span>` : ""}</li>`;
+    return `<li><div class="mono-tile" data-boot>${dots(ini, { rows: 7, grid: true, label: m.name })}</div><b>${name}</b>${m.role ? `<span>${esc(m.role)}</span>` : ""}</li>`;
   }).join("");
   const partners = document.getElementById("partner-list");
   if (partners) partners.innerHTML = V.partners.map((p) => `<li>${esc(p)}</li>`).join("");
 
-  /* ---------- Shared noise ---------- */
-  function noise2(seed) {
-    const h = (x, y) => { let n = Math.imul(x, 374761393) + Math.imul(y, 668265263) + seed; n = Math.imul(n ^ (n >>> 13), 1274126177); return ((n ^ (n >>> 16)) >>> 0) / 4294967295; };
-    const s = (t) => t * t * (3 - 2 * t);
-    return (x, y) => {
-      const xi = Math.floor(x), yi = Math.floor(y), xf = s(x - xi), yf = s(y - yi);
-      const a = h(xi, yi), b = h(xi + 1, yi), c = h(xi, yi + 1), d = h(xi + 1, yi + 1);
-      return a + (b - a) * xf + (c - a) * yf + (a - b - c + d) * xf * yf;
-    };
-  }
-
-  /* ---------- Scope viewport ---------- */
-  const scope = document.getElementById("scope");
-  if (scope) {
-    const N = 256, src = document.createElement("canvas"); src.width = src.height = N;
-    const sx = src.getContext("2d"), img = sx.createImageData(N, N), nz = noise2(7), nz2 = noise2(31);
-    const fbm = (x, y) => { let v = 0, a = 0.5, f = 1; for (let o = 0; o < 5; o++) { v += a * nz(x * f, y * f); f *= 2; a *= 0.5; } return v; };
-    const mix = (a, b, t) => a + (b - a) * t;
-    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
-      const u = x / N, v = y / N, t = fbm(u * 4, v * 4), fat = Math.max(0, nz2(u * 3 + 2, v * 3) - 0.55) * 2.6;
-      const fold = Math.abs(Math.sin((u * 3 + t * 2.2) * Math.PI)) ** 6;
-      let r = mix(118, 196, t), g = mix(58, 112, t), b = mix(62, 108, t);
-      r = mix(r, 214, fat * 0.8); g = mix(g, 182, fat * 0.8); b = mix(b, 112, fat * 0.8);
-      const shade = 1 - fold * 0.35, spec = Math.max(0, fbm(u * 9 + 5, v * 9) - 0.7) * 3.3;
-      const i = (y * N + x) * 4;
-      img.data[i] = Math.min(255, r * shade + spec * 255); img.data[i + 1] = Math.min(255, g * shade + spec * 235); img.data[i + 2] = Math.min(255, b * shade + spec * 235); img.data[i + 3] = 255;
+  /* ---------- Dot-matrix display: the four steps of the loop ---------- */
+  const mx = document.getElementById("matrix");
+  const loop = document.getElementById("loop");
+  if (mx) {
+    const ctx = mx.getContext("2d"), css = getComputedStyle(document.documentElement);
+    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["See", "Seek", "Reason", "Evolve"];
+    const cells = [];
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+      const x = i - R, y = j - R;
+      if (x * x + y * y <= (R + 0.3) ** 2) cells.push({ x, y, delay: Math.random() * 420 });
     }
-    sx.putImageData(img, 0, 0);
-    function tool(ax, ay, bx, by, w) { // a metallic instrument shaft entering from the rim
-      const gr = sx.createLinearGradient(ax - w, ay, ax + w, ay + w);
-      gr.addColorStop(0, "#5c666b"); gr.addColorStop(0.5, "#d9e0e3"); gr.addColorStop(1, "#4a5357");
-      sx.strokeStyle = gr; sx.lineWidth = w; sx.lineCap = "butt";
-      sx.beginPath(); sx.moveTo(ax, ay); sx.lineTo(bx, by); sx.stroke();
-      const ang = Math.atan2(by - ay, bx - ax);
-      sx.fillStyle = "#3b4246";
-      for (const s of [-0.28, 0.28]) {
-        sx.beginPath(); sx.moveTo(bx, by);
-        sx.lineTo(bx + Math.cos(ang + s) * w * 2.1, by + Math.sin(ang + s) * w * 2.1);
-        sx.lineTo(bx + Math.cos(ang + s * 0.4) * w * 2.3, by + Math.sin(ang + s * 0.4) * w * 2.3);
-        sx.closePath(); sx.fill();
+    // Levels: 0 off, 1 brand, 2 signal (live), 3 faint
+    const near = (a, b, w) => Math.abs(a - b) < w;
+    const scenes = [
+      (x, y, t) => { // See: an eye that looks around
+        const half = 7.2 * (1 - (x / 13.5) ** 2), px = 4 * Math.sin(t * 1.3), py = 1.2 * Math.sin(t * 0.7);
+        if (Math.abs(x) <= 13.5 && near(Math.abs(y), half, 0.62)) return 1;
+        const d = Math.hypot(x - px, y - py);
+        if (Math.abs(y) < half - 0.4 && d <= 4.6) return d <= 1.6 ? 0 : (Math.hypot(x - px - 1.6, y - py + 1.6) < 0.8 ? 2 : 1);
+        return 0;
+      },
+      (x, y, t) => { // Seek: a lens sweeping over lines of text; what it covers lights up
+        const cx = -2 + 5 * Math.sin(t * 0.9), cy = -2 + 3 * Math.cos(t * 0.6), d = Math.hypot(x - cx, y - cy);
+        if (near(d, 6.4, 0.75)) return 1;
+        const ux = (x - cx) / Math.SQRT2 + (y - cy) / Math.SQRT2, uy = (x - cx) / Math.SQRT2 - (y - cy) / Math.SQRT2;
+        if (ux > 7 && ux < 15 && Math.abs(uy) < 1.3) return 1;
+        const line = (y + 11) % 4 === 0 && Math.abs(x) <= 11 && (x + 3 * y) % 7 !== 0;
+        if (line) return d < 5.6 ? 2 : 3;
+        return 0;
+      },
+      (() => { // Reason: a signal travels through a graph of evidence
+        const P = [[-10, -4], [-4, -10], [-3, 1], [4, -5], [10, -1], [3, 8], [-8, 7]];
+        const E = [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [2, 5], [5, 4], [6, 2], [6, 5]];
+        const path = [6, 2, 3, 4, 5, 2, 0, 1, 3];
+        const seg = (x, y, a, b) => { const [ax, ay] = P[a], [bx, by] = P[b], dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
+          const u = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / L)); return Math.hypot(x - ax - u * dx, y - ay - u * dy); };
+        return (x, y, t) => {
+          const k = (t * 1.6) % (path.length - 1), i = Math.floor(k), f = k - i, a = P[path[i]], b = P[path[i + 1]];
+          const sx = a[0] + (b[0] - a[0]) * f, sy = a[1] + (b[1] - a[1]) * f;
+          if (Math.hypot(x - sx, y - sy) < 1.3) return 2;
+          for (const [qx, qy] of P) if (Math.hypot(x - qx, y - qy) < 1.75) return 1;
+          for (const [u, v] of E) if (seg(x, y, u, v) < 0.5) return 3;
+          return 0;
+        };
+      })(),
+      (x, y, t) => { // Evolve: a turning double helix (each strand drawn as a continuous run of dots)
+        if (Math.abs(x) > 13) return 0;
+        const A = 6.5, k = 0.3, w = t * 1.8, f = (u) => A * Math.sin(u * k + w);
+        const lo = Math.min(f(x - 0.5), f(x + 0.5)) - 0.55, hi = Math.max(f(x - 0.5), f(x + 0.5)) + 0.55;
+        const front = Math.cos(x * k + w) > 0;
+        if (y >= lo && y <= hi) return front ? 1 : 3;
+        if (-y >= lo && -y <= hi) return front ? 3 : 1;
+        if (Math.round(x) % 4 === 0 && Math.abs(f(x)) > 2.5 && Math.abs(y) < Math.abs(f(x)) - 1.2) return 3;
+        return 0;
+      }
+    ];
+    let step = 0, prev = 0, changed = -1e9, t0 = performance.now(), lastStepAt = t0, lastDraw = 0;
+    function size() { const r = mx.getBoundingClientRect(), d = devicePixelRatio || 1; mx.width = mx.height = Math.round(r.width * d); }
+    function colors() { return [css.getPropertyValue("--dot-off").trim(), css.getPropertyValue("--drape").trim(), css.getPropertyValue("--signal").trim(), css.getPropertyValue("--faint").trim()]; }
+    function draw(now) {
+      const W = mx.width, c = W / N, rad = c * 0.36, col = colors(), t = (now - t0) / 1000, since = now - changed;
+      ctx.clearRect(0, 0, W, W);
+      for (const p of cells) {
+        const sc = since < p.delay ? prev : step;
+        const lv = scenes[sc](p.x, p.y, t);
+        ctx.fillStyle = col[lv];
+        ctx.beginPath(); ctx.arc((p.x + R + 0.5) * c, (p.y + R + 0.5) * c, lv ? rad : rad * 0.82, 0, 7); ctx.fill();
       }
     }
-    tool(N * 1.05, N * 0.18, N * 0.6, N * 0.46, 16);
-    tool(-N * 0.05, N * 0.95, N * 0.38, N * 0.6, 13);
-    const vg = sx.createRadialGradient(N / 2, N / 2, N * 0.15, N / 2, N / 2, N * 0.52);
-    vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,0.75)");
-    sx.fillStyle = vg; sx.fillRect(0, 0, N, N);
+    function setStep(n, now) {
+      prev = step; step = n; changed = now; lastStepAt = now;
+      const lab = document.getElementById("matrix-label");
+      if (lab) lab.textContent = `0${n + 1} ${names[n]}`;
+      loop?.querySelectorAll("li").forEach((li, i) => {
+        li.classList.toggle("active", i === n);
+        const bar = li.querySelector("s"); if (bar) { bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = ""; }
+      });
+      if (still) draw(now);
+    }
+    loop?.addEventListener("click", (e) => { const b = e.target.closest("button[data-step]"); if (b) setStep(+b.dataset.step, performance.now()); });
+    loop?.style.setProperty("--step-ms", STEP_MS + "ms");
+    if (still) loop?.classList.add("manual");
+    size(); setStep(0, performance.now()); draw(performance.now());
+    addEventListener("resize", () => { size(); draw(performance.now()); });
+    let visible = true;
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(mx);
+    function tick(now) {
+      if (visible && now - lastDraw > 66) { // ~15 fps: stepwise, like an instrument display
+        if (now - lastStepAt > STEP_MS) setStep((step + 1) % 4, now);
+        draw(now); lastDraw = now;
+      }
+      requestAnimationFrame(tick);
+    }
+    if (!still) requestAnimationFrame(tick);
+  }
 
-    const ctx = scope.getContext("2d"), small = document.createElement("canvas"), smx = small.getContext("2d");
-    const steps = [6, 9, 14, 20, 28, 40, 56, 80, 112];
-    function paint(res) {
-      const d = scope.width;
-      small.width = small.height = res;
-      smx.imageSmoothingEnabled = true; smx.drawImage(src, 0, 0, res, res);
-      ctx.clearRect(0, 0, d, d);
-      ctx.save(); ctx.beginPath(); ctx.arc(d / 2, d / 2, d / 2, 0, Math.PI * 2); ctx.clip();
-      ctx.imageSmoothingEnabled = false; ctx.drawImage(small, 0, 0, d, d);
-      ctx.restore();
-      scope.dataset.res = res;
-      const lab = document.getElementById("scope-res");
-      if (lab) lab.textContent = `${res} × ${res}`;
-    }
-    function size() { const r = scope.getBoundingClientRect(), dpr = devicePixelRatio || 1; scope.width = scope.height = Math.round(r.width * dpr); }
-    let running = false;
-    function resolve() {
-      if (running) return; running = true;
-      let i = 0;
-      const go = () => { paint(steps[i]); if (++i < steps.length) setTimeout(go, 140 + i * 25); else running = false; };
-      go();
-    }
-    size();
-    if (still) paint(steps[steps.length - 1]); else resolve();
-    addEventListener("resize", () => { size(); paint(+scope.dataset.res || steps[steps.length - 1]); });
-    scope.closest(".scope")?.addEventListener("pointerenter", () => { if (!still) resolve(); });
+  /* ---------- Monograms boot dot by dot when they scroll into view ---------- */
+  const boots = document.querySelectorAll("[data-boot]");
+  if (boots.length && !still && "IntersectionObserver" in window) {
+    boots.forEach((el) => el.querySelectorAll(".dot-on circle").forEach((c) => { c.style.transitionDelay = Math.round(Math.random() * 600) + "ms"; }));
+    boots.forEach((el) => el.classList.add("boot"));
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("booted"); io.unobserve(e.target); } }), { threshold: 0.6 });
+    boots.forEach((el) => io.observe(el));
+  }
+
+  /* ---------- System diagram: rows and nodes highlight each other ---------- */
+  const sys = document.getElementById("system");
+  if (sys) {
+    if (still) sys.pauseAnimations?.();
+    document.querySelectorAll(".art[data-node]").forEach((row) => {
+      const node = sys.querySelector(`.node[data-node="${row.dataset.node}"]`);
+      if (!node) return;
+      const on = () => node.classList.add("hl"), off = () => node.classList.remove("hl");
+      row.addEventListener("mouseenter", on); row.addEventListener("mouseleave", off);
+      row.addEventListener("focusin", on); row.addEventListener("focusout", off);
+    });
   }
 
   /* ---------- Vital trace ---------- */
