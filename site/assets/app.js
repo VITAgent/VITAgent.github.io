@@ -67,13 +67,27 @@
   /* ---------- Team (data in team.js) ---------- */
   const T = window.VITAGENT_TEAM || { institutions: {}, people: [] };
   const instKeys = Object.keys(T.institutions);
-  // Each institution gets a marker of 1-4 dots, so affiliations are told apart without relying on colour.
-  const MARKS = [["....", ".#..", "....", "...."], ["....", "#.#.", "....", "...."], [".#..", "....", "#.#.", "...."], ["#.#.", "....", "#.#.", "...."]];
+  // Each institution has a dot-matrix marker shape (set with `mark` in team.js), so affiliations are
+  // told apart by shape rather than colour.
+  const MARKS = {
+    ring:    [".###.", "#...#", "#...#", "#...#", ".###."],
+    plus:    ["..#..", "..#..", "#####", "..#..", "..#.."],
+    diamond: ["..#..", ".#.#.", "#...#", ".#.#.", "..#.."],
+    square:  ["#####", "#...#", "#.#.#", "#...#", "#####"],
+    cross:   ["#...#", ".#.#.", "..#..", ".#.#.", "#...#"],
+    tri:     ["..#..", "..#..", ".#.#.", ".#.#.", "#####"],
+    grid:    ["#.#.#", ".....", "#.#.#", ".....", "#.#.#"],
+    bar:     [".....", ".....", "#####", ".....", "....."]
+  };
+  const fallback = Object.keys(MARKS);
   function mark(key) {
-    const m = MARKS[instKeys.indexOf(key) % MARKS.length] || MARKS[0];
-    let c = "";
-    m.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === "#") c += `<circle cx="${x + 0.5}" cy="${y + 0.5}" r="0.42"/>`; }));
-    return `<svg class="mark" viewBox="0 0 3 3" aria-hidden="true">${c}</svg>`;
+    const inst = T.institutions[key] || {}, m = MARKS[inst.mark] || MARKS[fallback[instKeys.indexOf(key) % fallback.length]];
+    let lit = "", off = "";
+    m.forEach((row, y) => [...row].forEach((ch, x) => {
+      const c = `<circle cx="${x + 0.5}" cy="${y + 0.5}" r="0.38"/>`;
+      if (ch === "#") lit += c; else off += c;
+    }));
+    return `<svg class="mark" viewBox="0 0 5 5" aria-hidden="true"><g class="m-off">${off}</g><g class="m-on">${lit}</g></svg>`;
   }
   const team = document.getElementById("team-list");
   if (team) team.innerHTML = T.people.map((m) => {
@@ -81,7 +95,7 @@
     const name = m.url ? `<a href="${esc(m.url)}">${esc(m.name)}</a>` : esc(m.name);
     const face = m.photo ? `<img src="${esc(m.photo)}" alt="" loading="lazy">` : dots(ini, { rows: 7, grid: true, label: m.name });
     const affs = (m.affiliations || []).filter((k) => T.institutions[k]).map((k, i) =>
-      `<li class="${i === 0 ? "primary" : ""}" title="${esc(T.institutions[k].name)}">${mark(k)}${esc(T.institutions[k].short || T.institutions[k].name)}</li>`).join("");
+      `<li class="${i === 0 ? "primary" : ""}" title="${esc(T.institutions[k].name)}"><span class="sr">${esc(T.institutions[k].name)}</span>${mark(k)}</li>`).join("");
     return `<li data-aff="${esc((m.affiliations || []).join(" "))}"><div class="mono-tile"${m.photo ? "" : " data-boot"}>${face}</div><b>${name}</b>${m.role ? `<span>${esc(m.role)}</span>` : ""}<ul class="affs">${affs}</ul></li>`;
   }).join("");
   const filter = document.getElementById("aff-filter");
