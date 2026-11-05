@@ -1,7 +1,7 @@
 "use strict";
 /* VITAgent site behaviour.
    1. Dot-matrix type (wordmark, monograms) rendered as SVG.
-   2. Links that switch on when config.js has a public URL.
+   2. Nav state; resource sets that show only public links.
    3. News from config.js; team and institutions from team.js.
    4. Dot-matrix display cycling through the loop (See, Seek, Reason, Evolve), synced with the step list.
    5. Monograms that boot dot by dot; system diagram with travelling packets.
@@ -50,20 +50,49 @@
     el.innerHTML = dots(el.dataset.dots, { grid: el.hasAttribute("data-grid"), rows: +el.dataset.rows || ROWS, label: el.dataset.label });
   });
 
-  /* ---------- Links ---------- */
-  document.querySelectorAll("[data-link]").forEach((el) => {
-    const v = (V.links || {})[el.dataset.link];
-    if (typeof v !== "string") return;
-    let u; try { u = new URL(v); } catch { return; }
-    if (u.protocol !== "https:") return;
-    const a = document.createElement("a");
-    a.href = u.href; a.className = el.className.replace("off", "on"); a.textContent = el.textContent;
-    el.replaceWith(a);
+  /* ---------- Nav: raised once scrolled; current section marked ---------- */
+  const top = document.getElementById("top");
+  if (top) {
+    const onScroll = () => top.classList.toggle("scrolled", scrollY > 8);
+    addEventListener("scroll", onScroll, { passive: true }); onScroll();
+    const links = [...top.querySelectorAll('nav a[href^="#"]')];
+    const secs = links.map((a) => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+    if (secs.length && "IntersectionObserver" in window) {
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        links.forEach((a) => a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + e.target.id)));
+      }), { rootMargin: "-40% 0px -55% 0px" });
+      secs.forEach((s) => io.observe(s));
+    }
+  }
+
+  /* ---------- Resource sets (DESIGN.md 3.3) ----------
+     data-res="Paper=bench.paper,Code=bench.code". Available resources become links;
+     unavailable ones are not shown and are summarised in one meta sentence. */
+  const publicUrl = (key) => {
+    const v = (V.links || {})[key];
+    if (typeof v !== "string") return null;
+    try { const u = new URL(v); return u.protocol === "https:" ? u.href : null; } catch { return null; }
+  };
+  const listJoin = (xs) => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
+  document.querySelectorAll("[data-res]").forEach((el) => {
+    const items = el.dataset.res.split(",").map((p) => p.split("=")).filter((p) => p.length === 2);
+    const on = items.filter(([, k]) => publicUrl(k)), off = items.filter(([, k]) => !publicUrl(k));
+    let html = on.map(([label, k]) => `<a class="link" href="${esc(publicUrl(k))}">${esc(label)}</a>`).join("");
+    if (off.length) {
+      const names = off.map(([l]) => l.toLowerCase());
+      const sentence = listJoin(names) + " coming soon";
+      html += `<span class="meta">${esc(sentence[0].toUpperCase() + sentence.slice(1))}</span>`;
+    }
+    el.innerHTML = html;
   });
 
-  /* ---------- News, team, partners ---------- */
+  /* ---------- News ---------- */
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const niceDate = (d) => { const m = /^(\d{4})[.\-/](\d{1,2})/.exec(String(d)); return m ? `${MONTHS[+m[2] - 1]} ${m[1]}` : String(d); };
   const news = document.getElementById("news-list");
-  if (news) news.innerHTML = V.news.map((n, i) => `<li${i === 0 ? ' class="new"' : ""}><time>${esc(n.date)}</time><span>${esc(n.text)}</span></li>`).join("");
+  if (news) news.innerHTML = V.news.map((n, i) => `<li${i === 0 ? ' class="new"' : ""}><time>${esc(niceDate(n.date))}</time><span>${esc(n.text)}</span></li>`).join("");
+
   /* ---------- Team (data in team.js) ---------- */
   const T = window.VITAGENT_TEAM || { institutions: {}, people: [] };
   const instKeys = Object.keys(T.institutions);
@@ -96,13 +125,12 @@
     const face = m.photo ? `<img src="${esc(m.photo)}" alt="" loading="lazy">` : dots(ini, { rows: 7, grid: true, label: m.name });
     const affs = (m.affiliations || []).filter((k) => T.institutions[k]).map((k, i) =>
       `<li class="${i === 0 ? "primary" : ""}" title="${esc(T.institutions[k].name)}"><span class="sr">${esc(T.institutions[k].name)}</span>${mark(k)}</li>`).join("");
-    return `<li data-aff="${esc((m.affiliations || []).join(" "))}"><div class="mono-tile"${m.photo ? "" : " data-boot"}>${face}</div><b>${name}</b>${m.role ? `<span>${esc(m.role)}</span>` : ""}<ul class="affs">${affs}</ul></li>`;
+    return `<li data-aff="${esc((m.affiliations || []).join(" "))}"><div class="mono-tile"${m.photo ? "" : " data-boot"}>${face}</div><b>${name}</b>${m.role ? `<span class="meta">${esc(m.role)}</span>` : ""}<ul class="affs">${affs}</ul></li>`;
   }).join("");
   const filter = document.getElementById("aff-filter");
   if (filter && team) {
-    const count = (k) => T.people.filter((p) => (p.affiliations || []).includes(k)).length;
-    filter.innerHTML = `<li><button type="button" data-aff="" aria-pressed="true">All<i>${T.people.length}</i></button></li>` +
-      instKeys.map((k) => `<li><button type="button" data-aff="${esc(k)}" aria-pressed="false">${mark(k)}${esc(T.institutions[k].name)}<i>${count(k)}</i></button></li>`).join("");
+    filter.innerHTML = `<li><button type="button" data-aff="" aria-pressed="true">All</button></li>` +
+      instKeys.map((k) => `<li><button type="button" data-aff="${esc(k)}" aria-pressed="false">${mark(k)}${esc(T.institutions[k].name)}</button></li>`).join("");
     filter.addEventListener("click", (e) => {
       const b = e.target.closest("button"); if (!b) return;
       const k = b.dataset.aff;
@@ -113,10 +141,10 @@
 
   /* ---------- Dot-matrix display: the four steps of the loop ---------- */
   const mx = document.getElementById("matrix");
-  const loop = document.getElementById("loop");
+  const loop = document.getElementById("steps");
   if (mx) {
     const ctx = mx.getContext("2d"), css = getComputedStyle(document.documentElement);
-    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["See", "Seek", "Reason", "Evolve"];
+    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["See", "Seek", "Reason", "Evolve"], lines = ["surgical video", "surgical knowledge", "over evidence", "from its own trajectories"];
     const cells = [];
     for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
       const x = i - R, y = j - R;
@@ -169,7 +197,7 @@
     ];
     let step = 0, prev = 0, changed = -1e9, t0 = performance.now(), lastStepAt = t0, lastDraw = 0;
     function size() { const r = mx.getBoundingClientRect(), d = devicePixelRatio || 1; mx.width = mx.height = Math.round(r.width * d); }
-    function colors() { return [css.getPropertyValue("--dot-off").trim(), css.getPropertyValue("--drape").trim(), css.getPropertyValue("--signal").trim(), css.getPropertyValue("--faint").trim()]; }
+    function colors() { return [css.getPropertyValue("--dot-off").trim(), css.getPropertyValue("--brand").trim(), css.getPropertyValue("--signal").trim(), css.getPropertyValue("--faint").trim()]; }
     function draw(now) {
       const W = mx.width, c = W / N, rad = c * 0.36, col = colors(), t = (now - t0) / 1000, since = now - changed;
       ctx.clearRect(0, 0, W, W);
@@ -182,17 +210,13 @@
     }
     function setStep(n, now) {
       prev = step; step = n; changed = now; lastStepAt = now;
-      const lab = document.getElementById("matrix-label");
-      if (lab) lab.textContent = `0${n + 1} ${names[n]}`;
-      loop?.querySelectorAll("li").forEach((li, i) => {
-        li.classList.toggle("active", i === n);
-        const bar = li.querySelector("s"); if (bar) { bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = ""; }
-      });
+      const nm = document.getElementById("step-name"), ln = document.getElementById("step-line");
+      if (nm) nm.textContent = names[n];
+      if (ln) ln.textContent = lines[n];
+      loop?.querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-current", String(i === n)));
       if (still) draw(now);
     }
     loop?.addEventListener("click", (e) => { const b = e.target.closest("button[data-step]"); if (b) setStep(+b.dataset.step, performance.now()); });
-    loop?.style.setProperty("--step-ms", STEP_MS + "ms");
-    if (still) loop?.classList.add("manual");
     size(); setStep(0, performance.now()); draw(performance.now());
     addEventListener("resize", () => { size(); draw(performance.now()); });
     let visible = true;
@@ -253,7 +277,7 @@
     }
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      const line = css.getPropertyValue("--drape").trim(), sig = css.getPropertyValue("--signal").trim(), grid = css.getPropertyValue("--dot-off").trim();
+      const line = css.getPropertyValue("--brand").trim(), sig = css.getPropertyValue("--signal").trim(), grid = css.getPropertyValue("--dot-off").trim();
       const rad = P * 0.36;
       ctx.fillStyle = grid;
       for (let y = 0; y < rows; y += 2) for (let x = 0; x < cols; x += 2) { ctx.beginPath(); ctx.arc(x * P + P / 2, y * P + P / 2, rad * 0.6, 0, 7); ctx.fill(); }

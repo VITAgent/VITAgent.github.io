@@ -16,7 +16,7 @@
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
-  <header class="top">
+  <header class="top" id="top">
     <div class="wrap top-in">
       <a class="brand" href="./" aria-label="VITAgent home"><span class="dm" data-dots="VITAgent" data-label="VITAgent"></span></a>
       <nav aria-label="Main">
@@ -24,7 +24,7 @@
         <a href="#news">News</a>
         <a href="#artifacts">Artifacts</a>
         <a href="#team">Team</a>
-        <a href="https://github.com/VITAgent" class="gh">GitHub</a>
+        <a href="https://github.com/VITAgent">GitHub</a>
       </nav>
     </div>
   </header>
@@ -37,41 +37,42 @@
           <p class="claim">Surgical Intelligence</p>
           <p class="lede">Agents that watch an operation, look up what they don't know, and learn from their own attempts.</p>
         </div>
-        <figure class="scope" aria-label="Dot-matrix display cycling through the four steps of the VITAgent loop">
-          <canvas id="matrix" aria-hidden="true"></canvas>
-          <figcaption id="matrix-label">01 See</figcaption>
+        <figure class="scope">
+          <div class="scope-disc"><canvas id="matrix" aria-hidden="true"></canvas></div>
+          <figcaption class="scope-cap">
+            <span class="cap-text" aria-live="polite"><b id="step-name">See</b> <span id="step-line">surgical video</span></span>
+            <span class="steps" id="steps" role="group" aria-label="Steps of the loop">
+              <button type="button" data-step="0" aria-label="See"></button>
+              <button type="button" data-step="1" aria-label="Seek"></button>
+              <button type="button" data-step="2" aria-label="Reason"></button>
+              <button type="button" data-step="3" aria-label="Evolve"></button>
+            </span>
+          </figcaption>
         </figure>
       </div>
 
       <div class="wrap">
         <div class="vitals">
-          <div class="param" aria-label="vīta: Latin noun meaning life">
-            <span class="p-name">vīta</span>
+          <div class="readout" aria-label="vīta, Latin noun: life">
+            <span class="meta">vīta</span>
             <b>life</b>
-            <span class="p-sub">Latin, noun</span>
+            <span class="meta">Latin, noun</span>
           </div>
           <canvas id="vitals" aria-hidden="true"></canvas>
         </div>
-        <ol class="loop" id="loop" aria-label="The VITAgent loop">
-          <li><button type="button" data-step="0"><i>01</i><b>See</b><span>surgical video</span><s aria-hidden="true"></s></button></li>
-          <li><button type="button" data-step="1"><i>02</i><b>Seek</b><span>surgical knowledge</span><s aria-hidden="true"></s></button></li>
-          <li><button type="button" data-step="2"><i>03</i><b>Reason</b><span>over evidence</span><s aria-hidden="true"></s></button></li>
-          <li><button type="button" data-step="3"><i>04</i><b>Evolve</b><span>from its own trajectories</span><s aria-hidden="true"></s></button></li>
-        </ol>
       </div>
     </section>
 
-    <section class="block" id="news" aria-labelledby="news-title">
-      <div class="wrap two-col">
-        <h2 id="news-title">News</h2>
+    <section class="sec" id="news" aria-labelledby="news-title">
+      <div class="wrap">
+        <h2 class="title" id="news-title">News</h2>
         <ul class="news" id="news-list"></ul>
       </div>
     </section>
 
-    <section class="block" id="artifacts" aria-labelledby="artifacts-title">
-      <div class="wrap two-col">
-        <h2 id="artifacts-title">Artifacts</h2>
-        <div>
+    <section class="sec" id="artifacts" aria-labelledby="artifacts-title">
+      <div class="wrap">
+        <h2 class="title" id="artifacts-title">Artifacts</h2>
         <figure class="system" aria-label="How the artifacts connect: SurgWiki supplies knowledge and SurgAgent acts inside SurgAgentGym, which hosts SurgKnow-Bench; trajectories feed SurgAgentEvolve, which produces the next SurgAgent.">
           <svg id="system" viewBox="0 0 880 280" aria-hidden="true">
             <path id="e1" class="edge" d="M190 56 C 250 56, 250 100, 300 100"/>
@@ -93,49 +94,48 @@
             <circle class="pkt" r="3.5"><animateMotion dur="5.2s" repeatCount="indefinite"><mpath href="#e4"/></animateMotion></circle>
           </svg>
         </figure>
-        <div class="arts">
-          <article data-node="gym" class="art">
-            <span class="dm dm-mono" data-dots="G" data-grid data-boot aria-hidden="true"></span>
-            <h3>SurgAgentGym</h3>
-            <p>Environment</p>
-            <div class="meta"><span class="tag">Soon</span><span class="off" data-link="gym.code">Code</span></div>
-          </article>
-          <article data-node="bench" class="art feat">
+
+        <div class="ents">
+          <article class="ent feat" data-node="bench">
             <span class="dm dm-mono" data-dots="B" data-grid data-boot aria-hidden="true"></span>
             <h3><a href="bench/">SurgKnow-Bench</a></h3>
-            <p>Benchmark</p>
-            <div class="meta"><span class="tag hi">NeurIPS 2026</span><span class="off" data-link="bench.paper">Paper</span><span class="off" data-link="bench.code">Code</span></div>
+            <p class="meta">NeurIPS 2026, Datasets and Benchmarks</p>
+            <p class="desc">Can a generalist model look up the surgery it doesn't know?</p>
+            <p class="res" data-res="Paper=bench.paper,Code=bench.code,Trajectories=bench.viewer"></p>
           </article>
-          <article data-node="wiki" class="art">
+          <article class="ent" data-node="gym">
+            <span class="dm dm-mono" data-dots="G" data-grid data-boot aria-hidden="true"></span>
+            <h3>SurgAgentGym</h3>
+            <p class="desc">An environment where agents watch surgical video, call tools and leave a full trajectory.</p>
+            <p class="res" data-res="Code=gym.code"></p>
+          </article>
+          <article class="ent" data-node="wiki">
             <span class="dm dm-mono" data-dots="W" data-grid data-boot aria-hidden="true"></span>
             <h3>SurgWiki</h3>
-            <p>Knowledge base</p>
-            <div class="meta"><span class="tag">Soon</span><span class="off" data-link="wiki.code">Code</span></div>
+            <p class="desc">A curated surgical knowledge base, built from what a surgical resident studies.</p>
+            <p class="res" data-res="Code=wiki.code"></p>
           </article>
-          <article data-node="agent" class="art">
+          <article class="ent" data-node="agent">
             <span class="dm dm-mono" data-dots="A" data-grid data-boot aria-hidden="true"></span>
             <h3>SurgAgent</h3>
-            <p>Agent harness</p>
-            <div class="meta"><span class="tag">v1, v2</span><span class="off" data-link="agent.code">Code</span></div>
+            <p class="desc">The reference agent. Version 1 reproduces SurgKnow-Bench; version 2 is in development.</p>
+            <p class="res" data-res="Code=agent.code"></p>
           </article>
-          <article data-node="evolve" class="art">
+          <article class="ent" data-node="evolve">
             <span class="dm dm-mono" data-dots="E" data-grid data-boot aria-hidden="true"></span>
             <h3><a href="evolve/">SurgAgentEvolve</a></h3>
-            <p>Self-evolving agent</p>
-            <div class="meta"><span class="tag">Coming soon</span></div>
+            <p class="desc">Agents that learn from their own trajectories.</p>
+            <p class="res" data-res="Paper=evolve.paper"></p>
           </article>
-        </div>
         </div>
       </div>
     </section>
 
-    <section class="block" id="team" aria-labelledby="team-title">
-      <div class="wrap two-col">
-        <h2 id="team-title">Team</h2>
-        <div>
-          <ul class="aff-filter" id="aff-filter" aria-label="Filter by institution"></ul>
-          <ul class="team" id="team-list"></ul>
-        </div>
+    <section class="sec" id="team" aria-labelledby="team-title">
+      <div class="wrap">
+        <h2 class="title" id="team-title">Team</h2>
+        <ul class="filter" id="aff-filter" aria-label="Filter by institution"></ul>
+        <ul class="team" id="team-list"></ul>
       </div>
     </section>
   </main>
