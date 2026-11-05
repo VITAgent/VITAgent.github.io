@@ -100,11 +100,13 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .steps button:focus-visible { outline: 2px solid var(--brand); outline-offset: 0; border-radius: 50%; }
 
 /* Expressive visual: vital trace with the vīta readout */
-.vitals { margin-top: 96px; display: grid; grid-template-columns: 136px 1fr; align-items: center; gap: 24px; }
-.vitals canvas { width: 100%; height: 88px; display: block; }
-.readout { display: flex; flex-direction: column; }
-.readout b { font-size: 28px; line-height: 32px; font-weight: 500; letter-spacing: -0.02em; margin: 2px 0; }
-@media (max-width: 640px) { .vitals { grid-template-columns: 1fr; gap: 8px; } .readout { flex-direction: row; align-items: baseline; gap: 10px; } .readout b { font-size: 22px; } }
+.vitals { margin-top: 96px; display: grid; grid-template-columns: 240px 1fr; align-items: center; gap: 40px; }
+.vitals canvas { width: 100%; height: 104px; display: block; }
+.dict { display: grid; gap: 16px; }
+.dict dt { font-size: 24px; line-height: 30px; font-weight: 500; letter-spacing: -0.015em; }
+.dict dd { margin: 2px 0 0; font-size: 15px; line-height: 22px; }
+.dict dd i { color: var(--muted); margin-right: 8px; }
+@media (max-width: 640px) { .vitals { grid-template-columns: 1fr; gap: 16px; } .dict { grid-template-columns: 1fr 1fr; } }
 
 /* Sections: separated by space only */
 .sec { padding-top: var(--sec); }
@@ -118,20 +120,29 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 @keyframes blink { 50% { opacity: .15; } }
 @media (max-width: 640px) { .news li { grid-template-columns: 1fr; gap: 0; } }
 
-/* Expressive visual: system diagram */
-.system { margin-bottom: 64px; }
+/* Expressive visual: system map. Regions are tinted; dots only on the relations. */
+.system { margin-top: 80px; }
 .system svg { width: 100%; height: auto; display: block; overflow: visible; }
-.system .edge { fill: none; stroke: var(--faint); stroke-width: 1.25; }
-.system .edge.back { stroke-dasharray: 4 5; }
-.system .elabel { font: 400 11px var(--mono); fill: var(--muted); }
-.system .node rect { fill: var(--raised); stroke: var(--dot-off); stroke-width: 1; transition: stroke var(--quick), fill var(--quick); }
-.system .node.gym rect { fill: transparent; stroke-dasharray: 2 4; stroke: var(--faint); }
-.system .node.feat rect { stroke: var(--brand); }
-.system .node .n { font: 500 15px var(--sans); fill: var(--ink); }
-.system .node .k { font: 400 11px var(--mono); fill: var(--muted); }
-.system .node.hl rect { stroke: var(--brand); fill: var(--brand-soft); }
-.system .pkt { fill: var(--brand); }
-.system .pkt.live { fill: var(--signal); }
+.system .reg .base { fill: var(--brand-soft); }
+.system .reg.minor .base { fill: color-mix(in srgb, var(--dot-off) 60%, var(--surface)); }
+.system .reg .tex { fill: url(#pd); }
+.system .pd { fill: var(--brand); opacity: .4; }
+.system .pdm { fill: var(--faint); opacity: .7; }
+.system .pdh { fill: var(--brand); }
+.system .reg.minor .tex { fill: url(#pdm); }
+.system .reg.hl .tex { fill: url(#pdh); }
+.system .reg.room .base { fill: none; }
+.system .reg.room .tex { fill: none; stroke: var(--brand); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0 6; }
+.system .reg.room.hl .tex { stroke-dasharray: 0 4; }
+.system .rn { paint-order: stroke; stroke: var(--brand-soft); stroke-width: 6px; stroke-linejoin: round; }
+.system .reg.room .rn { stroke: var(--surface); }
+.system .reg.minor .rn { stroke: color-mix(in srgb, var(--dot-off) 60%, var(--surface)); }
+.system .rn { font: 500 16px var(--sans); fill: var(--ink); }
+.system .reg.minor .rn { fill: var(--muted); }
+.system .rm, .system .el { font: 400 13px var(--sans); fill: var(--muted); }
+.system .edge { fill: none; stroke: var(--faint); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0 10; }
+.system .pk { fill: var(--brand); }
+.system .pk.live { fill: var(--signal); }
 @media (max-width: 640px) { .system { display: none; } }
 
 /* Product cards: the only raised surfaces on the page (DESIGN.md 3.4) */

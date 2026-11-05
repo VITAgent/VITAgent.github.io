@@ -53,11 +53,10 @@
 
       <div class="wrap">
         <div class="vitals">
-          <div class="readout" aria-label="vīta, Latin noun: life">
-            <span class="meta">vīta</span>
-            <b>life</b>
-            <span class="meta">Latin, noun</span>
-          </div>
+          <dl class="dict" aria-label="Where the name comes from">
+            <div><dt>vīta</dt><dd><i>Latin, noun</i>life</dd></div>
+            <div><dt>agent</dt><dd><i>noun</i>one that perceives, decides and acts</dd></div>
+          </dl>
           <canvas id="vitals" aria-hidden="true"></canvas>
         </div>
       </div>
@@ -73,34 +72,13 @@
     <section class="sec" id="artifacts" aria-labelledby="artifacts-title">
       <div class="wrap">
         <h2 class="title" id="artifacts-title">Artifacts</h2>
-        <figure class="system" aria-label="How the artifacts connect: SurgWiki supplies knowledge and SurgAgent acts inside SurgAgentGym, which hosts SurgKnow-Bench; trajectories feed SurgAgentEvolve, which produces the next SurgAgent.">
-          <svg id="system" viewBox="0 0 880 280" aria-hidden="true">
-            <path id="e1" class="edge" d="M190 56 C 250 56, 250 100, 300 100"/>
-            <path id="e2" class="edge" d="M190 204 C 250 204, 250 172, 300 172"/>
-            <path id="e3" class="edge" d="M560 130 L 690 130"/>
-            <path id="e4" class="edge back" d="M785 162 L 785 262 L 95 262 L 95 236"/>
-            <text class="elabel" x="214" y="44">knowledge</text>
-            <text class="elabel" x="214" y="226">actions</text>
-            <text class="elabel" x="586" y="120">trajectories</text>
-            <text class="elabel" x="400" y="254">next version</text>
-            <g class="node" data-node="wiki"><rect x="0" y="24" width="190" height="64" rx="4"/><text class="n" x="20" y="52">SurgWiki</text><text class="k" x="20" y="72">knowledge base</text></g>
-            <g class="node" data-node="agent"><rect x="0" y="172" width="190" height="64" rx="4"/><text class="n" x="20" y="200">SurgAgent</text><text class="k" x="20" y="220">agent harness</text></g>
-            <g class="node gym" data-node="gym"><rect x="300" y="36" width="260" height="190" rx="4"/><text class="n" x="320" y="64">SurgAgentGym</text><text class="k" x="320" y="84">environment</text></g>
-            <g class="node feat" data-node="bench"><rect x="320" y="132" width="220" height="70" rx="4"/><text class="n" x="340" y="162">SurgKnow-Bench</text><text class="k" x="340" y="182">benchmark</text></g>
-            <g class="node" data-node="evolve"><rect x="690" y="98" width="190" height="64" rx="4"/><text class="n" x="710" y="126">SurgAgentEvolve</text><text class="k" x="710" y="146">self-evolving agent</text></g>
-            <circle class="pkt" r="3.5"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#e1"/></animateMotion></circle>
-            <circle class="pkt" r="3.5"><animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite"><mpath href="#e2"/></animateMotion></circle>
-            <circle class="pkt live" r="3.5"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#e3"/></animateMotion></circle>
-            <circle class="pkt" r="3.5"><animateMotion dur="5.2s" repeatCount="indefinite"><mpath href="#e4"/></animateMotion></circle>
-          </svg>
-        </figure>
 
         <div class="cards">
           <article class="card feat" data-node="bench">
             <canvas class="emblem" data-emblem="bench" aria-hidden="true"></canvas>
             <div class="card-body">
               <h3><a href="bench/">SurgKnow-Bench</a></h3>
-              <p class="meta">Benchmark, NeurIPS 2026</p>
+              <p class="meta">NeurIPS 2026</p>
               <p class="desc">Can a generalist model look up the surgery it doesn't know?</p>
               <p class="res" data-res="Paper=bench.paper,Code=bench.code,Trajectories=bench.viewer"></p>
             </div>
@@ -109,7 +87,6 @@
             <canvas class="emblem" data-emblem="gym" aria-hidden="true"></canvas>
             <div class="card-body">
               <h3><a href="gym/">SurgAgentGym</a></h3>
-              <p class="meta">Environment</p>
               <p class="desc">Where agents watch surgical video, call tools and leave a full trajectory.</p>
               <p class="res" data-res="Code=gym.code"></p>
             </div>
@@ -118,7 +95,6 @@
             <canvas class="emblem" data-emblem="wiki" aria-hidden="true"></canvas>
             <div class="card-body">
               <h3><a href="wiki/">SurgWiki</a></h3>
-              <p class="meta">Knowledge base</p>
               <p class="desc">Curated surgical knowledge, built from what a surgical resident studies.</p>
               <p class="res" data-res="Code=wiki.code"></p>
             </div>
@@ -127,7 +103,6 @@
             <canvas class="emblem" data-emblem="agent" aria-hidden="true"></canvas>
             <div class="card-body">
               <h3><a href="agent/">SurgAgent</a></h3>
-              <p class="meta">Agent harness, v1 and v2</p>
               <p class="desc">The reference agent. Version 1 reproduces SurgKnow-Bench.</p>
               <p class="res" data-res="Code=agent.code"></p>
             </div>
@@ -136,12 +111,15 @@
             <canvas class="emblem" data-emblem="evolve" aria-hidden="true"></canvas>
             <div class="card-body">
               <h3><a href="evolve/">SurgAgentEvolve</a></h3>
-              <p class="meta">Self-evolving agent</p>
               <p class="desc">Agents that learn from their own trajectories.</p>
               <p class="res" data-res="Paper=evolve.paper"></p>
             </div>
           </article>
         </div>
+
+        <figure class="system" aria-label="How the artifacts fit together. SurgWiki is part of SurgAgentGym. SurgAgent acts in SurgAgentGym and receives observations. SurgKnow-Bench evaluates agents on top of SurgAgentGym. Trajectories from the Gym feed SurgAgentEvolve, which produces the next SurgAgent.">
+          <svg id="system" aria-hidden="true"></svg>
+        </figure>
       </div>
     </section>
 

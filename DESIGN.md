@@ -27,6 +27,8 @@ This follows the law of proximity (closeness alone is read as grouping) and the 
 **P2. Every mark carries information.**
 No decorative separators, no eyebrow labels above headings, no small labels that repeat what the content already says, no numbering unless the reader acts on the order. If deleting a mark loses nothing, delete it.
 
+Test before adding any meta line or caption: does it state a fact that is not already visible from the name, the sentence or the structure? A category under a product name ("Environment"), a caption under a region ("evaluation on top of the Gym") or a label on a relation the layout already shows ("evaluates") fails the test. A venue ("NeurIPS 2026") or a role ("Team lead") passes.
+
 **P3. Two registers: quiet and expressive.**
 Text, lists and controls are *quiet*: fast, small, consistent. The three visuals (dot-matrix display, vital trace, system diagram) are *expressive*: they carry the identity and are allowed motion. At most one expressive visual per screenful.
 
@@ -134,7 +136,7 @@ No greyed-out labels, no "Soon" tags.
 Each artifact is an independent product and is shown as one card.
 - Raised surface, 8px radius, no border. All cards in a set have equal height.
 - Emblem: a 15×15 dot-matrix screen with the product's own scene (Bench: bars, Gym: an agent walking between tools, Wiki: an open book being read, Agent: a tool call orbiting a core, Evolve: a double helix). Still at rest; animates while the card is hovered or focused.
-- Heading (name) · Meta (kind, venue or version) · Body (one sentence) · Resource set at the bottom.
+- Heading (name) · Meta only when it adds a fact, such as the venue · Body (one sentence) · Resource set at the bottom.
 - The whole card opens the product's own page. Every product has a page.
 - The current paper's card spans two columns, with a larger emblem beside the text.
 
@@ -149,8 +151,8 @@ A row of chips. Chip = optional mark + label + count in muted. Exactly one selec
 
 ### 3.8 Expressive visuals
 - **Dot-matrix display**: shows the loop (See, Seek, Reason, Evolve). Its own caption names the current step; no separate numbered step list.
-- **Vital trace**: with the *vīta* readout (Latin, noun: life).
-- **System diagram**: how the artifacts connect; hovering an entity highlights its node.
+- **Vital trace**: beside two dictionary entries that explain the name. Headword large (*vīta*, *agent*), part of speech in muted italics, definition in body text.
+- **System map**: products are tinted regions with a fine dot texture; the Gym is a room outlined by a dense dotted line; relations are dotted lines with packets stepping along them. No background dot field. SurgWiki sits inside SurgAgentGym; SurgAgent exchanges actions and observations with the Gym; SurgKnow-Bench sits on top of the Gym as its evaluation layer; trajectories flow to SurgAgentEvolve, which yields the next SurgAgent. Placed below the product cards; hovering a card highlights its region.
 
 ### 3.9 Interaction states
 

@@ -299,7 +299,7 @@
         ctx.fillStyle = col[lv]; ctx.beginPath(); ctx.arc((i + 0.5) * c, (j + 0.5) * c, lv ? rad : rad * 0.8, 0, 7); ctx.fill();
       }
     }
-    function loop(now) { if (now - last > 80) { t = (now - start) / 1000; draw(); last = now; } raf = requestAnimationFrame(loop); }
+    function loop(now) { if (now - last > 80) { t = Math.max(0.001, (now - start) / 1000); draw(); last = now; } raf = requestAnimationFrame(loop); }
     const card = cv.closest(".card");
     const play = () => { if (still || raf) return; start = performance.now() - 1; raf = requestAnimationFrame(loop); };
     const stop = () => { cancelAnimationFrame(raf); raf = 0; t = 0; draw(); };
@@ -318,16 +318,62 @@
     boots.forEach((el) => io.observe(el));
   }
 
-  /* ---------- System diagram: rows and nodes highlight each other ---------- */
+  /* ---------- System map ----------
+     Products are tinted regions (the Gym is an outlined room that contains SurgWiki).
+     Dots appear only on the relations: dotted lines with packets stepping along them.
+     Hovering a product card highlights its region. */
   const sys = document.getElementById("system");
   if (sys) {
-    if (still) sys.pauseAnimations?.();
-    document.querySelectorAll(".card[data-node]").forEach((row) => {
-      const node = sys.querySelector(`.node[data-node="${row.dataset.node}"]`);
-      if (!node) return;
-      const on = () => node.classList.add("hl"), off = () => node.classList.remove("hl");
-      row.addEventListener("mouseenter", on); row.addEventListener("mouseleave", off);
-      row.addEventListener("focusin", on); row.addEventListener("focusout", off);
+    const NS = "http://www.w3.org/2000/svg";
+    sys.setAttribute("viewBox", "0 0 900 404");
+    const R = [
+      { id: "bench",  x: 0,   y: 0,   w: 520, h: 68,  name: "SurgKnow-Bench" },
+      { id: "gym",    x: 0,   y: 120, w: 520, h: 228, name: "SurgAgentGym", room: true },
+      { id: "video",  x: 24,  y: 200, w: 224, h: 124, name: "Surgical video", minor: true },
+      { id: "wiki",   x: 272, y: 200, w: 224, h: 124, name: "SurgWiki" },
+      { id: "agent",  x: 680, y: 144, w: 220, h: 96,  name: "SurgAgent" },
+      { id: "evolve", x: 680, y: 320, w: 220, h: 84,  name: "SurgAgentEvolve" }
+    ];
+    const E = [
+      { d: "M680 176 H520", label: "actions", lx: 552, ly: 164 },
+      { d: "M520 212 H680", label: "observations", lx: 552, ly: 236 },
+      { d: "M260 120 V68", label: "" },
+      { d: "M260 348 V362 H680", label: "trajectories", lx: 290, ly: 388, live: true },
+      { d: "M790 320 V240", label: "next version", lx: 804, ly: 284 }
+    ];
+    // Dot textures for the regions: the same dot language as the rest of the page, kept fine enough to read through.
+    let html = `<defs>` +
+      `<pattern id="pd" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pd"/></pattern>` +
+      `<pattern id="pdm" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pdm"/></pattern>` +
+      `<pattern id="pdh" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.5" class="pdh"/></pattern></defs>`;
+    R.forEach((r) => {
+      html += `<g class="reg${r.room ? " room" : ""}${r.minor ? " minor" : ""}" data-r="${r.id}"><rect class="base" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/><rect class="tex" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/>` +
+        `<text class="rn" x="${r.x + 20}" y="${r.y + 34}">${esc(r.name)}</text></g>`;
+    });
+    E.forEach((e, i) => { html += `<path id="sx${i}" class="edge" d="${e.d}"/>` + (e.label ? `<text class="el" x="${e.lx}" y="${e.ly}">${esc(e.label)}</text>` : ""); });
+    sys.innerHTML = html + `<g id="pk"></g>`;
+
+    const pk = sys.querySelector("#pk"), packets = [], GAP = 10;
+    E.forEach((e, i) => {
+      const path = sys.querySelector("#sx" + i), L = path.getTotalLength(), n = Math.floor(L / GAP / 5) * 5; // a multiple of the packet spacing, so packets never bunch up at the wrap
+      for (let k = 0; k < n; k += 5) {
+        const c = document.createElementNS(NS, "circle");
+        c.setAttribute("r", "3.6"); c.setAttribute("class", "pk" + (e.live ? " live" : ""));
+        pk.appendChild(c); packets.push({ c, path, n, k });
+      }
+    });
+    const place = () => packets.forEach((p) => { const pt = p.path.getPointAtLength((p.k % p.n) * GAP); p.c.setAttribute("cx", pt.x); p.c.setAttribute("cy", pt.y); });
+    place();
+    let vis = false, last = 0;
+    new IntersectionObserver((es) => { vis = es[0].isIntersecting; }).observe(sys);
+    const step = (now) => { if (vis && now - last > 140) { packets.forEach((p) => p.k++); place(); last = now; } requestAnimationFrame(step); };
+    if (!still) requestAnimationFrame(step);
+
+    const hl = (id, on) => sys.querySelector(`.reg[data-r="${id}"]`)?.classList.toggle("hl", on);
+    document.querySelectorAll(".card[data-node]").forEach((card) => {
+      const id = card.dataset.node;
+      card.addEventListener("mouseenter", () => hl(id, true)); card.addEventListener("mouseleave", () => hl(id, false));
+      card.addEventListener("focusin", () => hl(id, true)); card.addEventListener("focusout", () => hl(id, false));
     });
   }
 
