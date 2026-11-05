@@ -120,21 +120,20 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 @keyframes blink { 50% { opacity: .15; } }
 @media (max-width: 640px) { .news li { grid-template-columns: 1fr; gap: 0; } }
 
-/* Expressive visual: system map on the dot grid */
-.system { margin-top: 64px; }
-.system svg { width: 100%; height: auto; display: block; }
-.system .bgd circle { fill: var(--dot-off); }
-.system .rd { fill: var(--brand); transition: fill var(--quick); }
-.system .rd.minor { fill: var(--faint); }
-.system .rd.hl { fill: var(--signal); }
-.system .ed { fill: var(--faint); }
+/* Expressive visual: system map. Regions are tinted; dots only on the relations. */
+.system { margin-top: 80px; }
+.system svg { width: 100%; height: auto; display: block; overflow: visible; }
+.system .reg rect { fill: var(--brand-soft); stroke: transparent; stroke-width: 2; transition: fill var(--quick), stroke var(--quick); }
+.system .reg.room rect { fill: none; stroke: var(--brand); stroke-width: 1.5; }
+.system .reg.minor rect { fill: var(--dot-off); }
+.system .reg.hl rect { stroke: var(--brand); }
+.system .reg.room.hl rect { stroke-width: 2.5; }
+.system .rn { font: 500 16px var(--sans); fill: var(--ink); }
+.system .reg.minor .rn { fill: var(--muted); }
+.system .rm, .system .el { font: 400 13px var(--sans); fill: var(--muted); }
+.system .edge { fill: none; stroke: var(--faint); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0 10; }
 .system .pk { fill: var(--brand); }
 .system .pk.live { fill: var(--signal); }
-.system .rbg { fill: transparent; transition: fill var(--quick); }
-.system .rbg.hl { fill: var(--brand-soft); }
-.system .rn { font: 500 15px var(--sans); fill: var(--ink); }
-.system .rn.minor { fill: var(--muted); }
-.system .rm, .system .el { font: 400 13px var(--sans); fill: var(--muted); }
 @media (max-width: 640px) { .system { display: none; } }
 
 /* Product cards: the only raised surfaces on the page (DESIGN.md 3.4) */

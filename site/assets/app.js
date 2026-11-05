@@ -299,7 +299,7 @@
         ctx.fillStyle = col[lv]; ctx.beginPath(); ctx.arc((i + 0.5) * c, (j + 0.5) * c, lv ? rad : rad * 0.8, 0, 7); ctx.fill();
       }
     }
-    function loop(now) { if (now - last > 80) { t = (now - start) / 1000; draw(); last = now; } raf = requestAnimationFrame(loop); }
+    function loop(now) { if (now - last > 80) { t = Math.max(0.001, (now - start) / 1000); draw(); last = now; } raf = requestAnimationFrame(loop); }
     const card = cv.closest(".card");
     const play = () => { if (still || raf) return; start = performance.now() - 1; raf = requestAnimationFrame(loop); };
     const stop = () => { cancelAnimationFrame(raf); raf = 0; t = 0; draw(); };
@@ -318,69 +318,54 @@
     boots.forEach((el) => io.observe(el));
   }
 
-  /* ---------- System map: how the products fit, drawn on the same dot grid ----------
-     Regions are windows in a field of dots, outlined by lit dots. Edges are runs of dots with
-     packets stepping along them. Hovering a product card highlights its region. */
+  /* ---------- System map ----------
+     Products are tinted regions (the Gym is an outlined room that contains SurgWiki).
+     Dots appear only on the relations: dotted lines with packets stepping along them.
+     Hovering a product card highlights its region. */
   const sys = document.getElementById("system");
   if (sys) {
-    const C = 14, COLS = 64, ROWS = 28, NS = "http://www.w3.org/2000/svg";
-    sys.setAttribute("viewBox", `0 0 ${COLS * C} ${ROWS * C}`);
-    // x0, y0, x1, y1 are inclusive cell coordinates
+    const NS = "http://www.w3.org/2000/svg";
+    sys.setAttribute("viewBox", "0 0 900 404");
     const R = [
-      { id: "bench",  x0: 2,  y0: 1,  x1: 37, y1: 4,  name: "SurgKnow-Bench",  meta: "evaluation on top of the Gym" },
-      { id: "gym",    x0: 2,  y0: 8,  x1: 37, y1: 21, name: "SurgAgentGym",    meta: "environment" },
-      { id: "video",  x0: 4,  y0: 12, x1: 18, y1: 19, name: "Surgical video",  meta: "perceive", minor: true },
-      { id: "wiki",   x0: 21, y0: 12, x1: 35, y1: 19, name: "SurgWiki",        meta: "retrieve" },
-      { id: "agent",  x0: 48, y0: 9,  x1: 61, y1: 16, name: "SurgAgent",       meta: "agent" },
-      { id: "evolve", x0: 48, y0: 22, x1: 61, y1: 26, name: "SurgAgentEvolve", meta: "self-evolution" }
+      { id: "bench",  x: 0,   y: 0,   w: 520, h: 68,  name: "SurgKnow-Bench",  meta: "evaluation on top of the Gym" },
+      { id: "gym",    x: 0,   y: 120, w: 520, h: 228, name: "SurgAgentGym",    meta: "environment", room: true },
+      { id: "video",  x: 24,  y: 200, w: 224, h: 124, name: "Surgical video",  meta: "perceive", minor: true },
+      { id: "wiki",   x: 272, y: 200, w: 224, h: 124, name: "SurgWiki",        meta: "retrieve" },
+      { id: "agent",  x: 680, y: 144, w: 220, h: 96,  name: "SurgAgent",       meta: "agent" },
+      { id: "evolve", x: 680, y: 320, w: 220, h: 84,  name: "SurgAgentEvolve", meta: "self-evolution" }
     ];
-    const run = (pts) => { const out = []; for (let i = 0; i < pts.length - 1; i++) { const [ax, ay] = pts[i], [bx, by] = pts[i + 1], n = Math.max(Math.abs(bx - ax), Math.abs(by - ay)); for (let k = 0; k < n; k++) out.push([ax + Math.sign(bx - ax) * k, ay + Math.sign(by - ay) * k]); } out.push(pts[pts.length - 1]); return out; };
     const E = [
-      { cells: run([[47, 11], [38, 11]]), label: "actions", lx: 39, ly: 10.2, ends: ["agent", "gym"] },
-      { cells: run([[38, 14], [47, 14]]), label: "observations", lx: 39, ly: 15.9, ends: ["agent", "gym", "video", "wiki"] },
-      { cells: run([[12, 7], [12, 5]]), label: "", ends: ["bench", "gym"] },
-      { cells: run([[27, 7], [27, 5]]), label: "evaluates", lx: 28.2, ly: 6.4, ends: ["bench", "gym"] },
-      { cells: run([[20, 22], [20, 24], [47, 24]]), label: "trajectories", lx: 22, ly: 23.2, ends: ["gym", "evolve"], live: true },
-      { cells: run([[55, 21], [55, 17]]), label: "next version", lx: 56.2, ly: 19.4, ends: ["evolve", "agent"], gap: true }
+      { d: "M680 176 H520", label: "actions", lx: 552, ly: 164 },
+      { d: "M520 212 H680", label: "observations", lx: 552, ly: 236 },
+      { d: "M260 120 V68", label: "evaluates", lx: 274, ly: 99 },
+      { d: "M260 348 V362 H680", label: "trajectories", lx: 290, ly: 388, live: true },
+      { d: "M790 320 V240", label: "next version", lx: 804, ly: 284 }
     ];
-    const inside = (r, x, y) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1;
-    const border = (r, x, y) => inside(r, x, y) && (x === r.x0 || x === r.x1 || y === r.y0 || y === r.y1);
-    const onEdge = new Set(E.flatMap((e) => e.cells.map(([x, y]) => x + "," + y)));
-    let bg = "", lines = "", labels = "";
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
-      const cx = (x + 0.5) * C, cy = (y + 0.5) * C;
-      const br = R.find((r) => border(r, x, y));
-      if (br) { lines += `<circle class="rd${br.minor ? " minor" : ""}" data-r="${br.id}" cx="${cx}" cy="${cy}" r="2.6"/>`; continue; }
-      if (onEdge.has(x + "," + y)) { lines += `<circle class="ed" cx="${cx}" cy="${cy}" r="1.9"/>`; continue; }
-      if (R.some((r) => inside(r, x, y) && !r.minor && r.id !== "gym") || R.some((r) => r.minor && inside(r, x, y))) continue;
-      if (inside(R[1], x, y)) continue; // the Gym is an open room
-      bg += `<circle cx="${cx}" cy="${cy}" r="1.5"/>`;
-    }
+    let html = "";
     R.forEach((r) => {
-      labels += `<rect class="rbg" data-r="${r.id}" x="${(r.x0 + 0.5) * C}" y="${(r.y0 + 0.5) * C}" width="${(r.x1 - r.x0) * C}" height="${(r.y1 - r.y0) * C}" rx="3"/>`;
-      labels += `<text class="rn${r.minor ? " minor" : ""}" x="${(r.x0 + 1.4) * C}" y="${(r.y0 + 2.1) * C}">${esc(r.name)}</text><text class="rm" x="${(r.x0 + 1.4) * C}" y="${(r.y0 + 3.3) * C}">${esc(r.meta)}</text>`;
+      html += `<g class="reg${r.room ? " room" : ""}${r.minor ? " minor" : ""}" data-r="${r.id}"><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/>` +
+        `<text class="rn" x="${r.x + 20}" y="${r.y + 32}">${esc(r.name)}</text><text class="rm" x="${r.x + 20}" y="${r.y + 52}">${esc(r.meta)}</text></g>`;
     });
-    E.forEach((e) => { if (e.label) labels += `<text class="el" x="${e.lx * C}" y="${e.ly * C}">${esc(e.label)}</text>`; });
-    sys.innerHTML = `<g class="bgd">${bg}</g>${labels}<g>${lines}</g><g id="pk"></g>`;
+    E.forEach((e, i) => { html += `<path id="sx${i}" class="edge" d="${e.d}"/><text class="el" x="${e.lx}" y="${e.ly}">${esc(e.label)}</text>`; });
+    sys.innerHTML = html + `<g id="pk"></g>`;
 
-    // packets: one every 4 cells, stepping along each edge
-    const pk = sys.querySelector("#pk"), packets = [];
-    E.forEach((e) => {
-      for (let i = 0; i < e.cells.length; i += e.gap ? 3 : 4) {
+    const pk = sys.querySelector("#pk"), packets = [], GAP = 10;
+    E.forEach((e, i) => {
+      const path = sys.querySelector("#sx" + i), L = path.getTotalLength(), n = Math.floor(L / GAP / 5) * 5; // a multiple of the packet spacing, so packets never bunch up at the wrap
+      for (let k = 0; k < n; k += 5) {
         const c = document.createElementNS(NS, "circle");
-        c.setAttribute("r", "2.8"); c.setAttribute("class", "pk" + (e.live ? " live" : ""));
-        pk.appendChild(c); packets.push({ c, e, i });
+        c.setAttribute("r", "3.6"); c.setAttribute("class", "pk" + (e.live ? " live" : ""));
+        pk.appendChild(c); packets.push({ c, path, n, k });
       }
     });
-    const place = () => packets.forEach((p) => { const [x, y] = p.e.cells[p.i % p.e.cells.length]; p.c.setAttribute("cx", (x + 0.5) * C); p.c.setAttribute("cy", (y + 0.5) * C); });
+    const place = () => packets.forEach((p) => { const pt = p.path.getPointAtLength((p.k % p.n) * GAP); p.c.setAttribute("cx", pt.x); p.c.setAttribute("cy", pt.y); });
     place();
     let vis = false, last = 0;
     new IntersectionObserver((es) => { vis = es[0].isIntersecting; }).observe(sys);
-    const step = (now) => { if (vis && now - last > 160) { packets.forEach((p) => p.i++); place(); last = now; } requestAnimationFrame(step); };
+    const step = (now) => { if (vis && now - last > 140) { packets.forEach((p) => p.k++); place(); last = now; } requestAnimationFrame(step); };
     if (!still) requestAnimationFrame(step);
 
-    // cards and regions
-    const hl = (id, on) => { sys.querySelectorAll(`[data-r="${id}"]`).forEach((n) => n.classList.toggle("hl", on)); };
+    const hl = (id, on) => sys.querySelector(`.reg[data-r="${id}"]`)?.classList.toggle("hl", on);
     document.querySelectorAll(".card[data-node]").forEach((card) => {
       const id = card.dataset.node;
       card.addEventListener("mouseenter", () => hl(id, true)); card.addEventListener("mouseleave", () => hl(id, false));
