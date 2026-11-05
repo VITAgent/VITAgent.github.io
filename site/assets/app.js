@@ -3,7 +3,7 @@
    1. Dot-matrix type (wordmark, monograms) rendered as SVG.
    2. Nav state; resource sets that show only public links.
    3. News from config.js; team and institutions from team.js.
-   4. Dot-matrix display cycling through the loop (See, Seek, Reason, Evolve), synced with the step list.
+   4. Dot-matrix display cycling through the pathway (Understand, Solve, Evolve).
    5. Product emblems; monograms that boot dot by dot; system diagram with travelling packets.
    6. Vital trace. */
 (() => {
@@ -35,6 +35,11 @@
     r: [".....", ".....", "#.##.", "##..#", "#....", "#....", "#...."], s: [".....", ".....", ".####", "#....", ".###.", "....#", "####."],
     v: [".....", ".....", "#...#", "#...#", "#...#", ".#.#.", "..#.."], w: [".....", ".....", "#...#", "#...#", "#.#.#", "#.#.#", ".#.#."],
     y: [".....", ".....", "#...#", "#...#", "#...#", ".####", "....#", ".###."],
+    b: ["#....", "#....", "####.", "#...#", "#...#", "#...#", "####."], d: ["....#", "....#", ".####", "#...#", "#...#", "#...#", ".####"],
+    h: ["#....", "#....", "####.", "#...#", "#...#", "#...#", "#...#"], l: [".##..", "..#..", "..#..", "..#..", "..#..", "..#..", ".###."],
+    p: [".....", ".....", "####.", "#...#", "#...#", "####.", "#....", "#...."], u: [".....", ".....", "#...#", "#...#", "#...#", "#..##", ".##.#"],
+    1: ["..#..", ".##..", "..#..", "..#..", "..#..", "..#..", ".###."], 2: [".###.", "#...#", "....#", "...#.", "..#..", ".#...", "#####"],
+    3: [".###.", "#...#", "....#", "..##.", "....#", "#...#", ".###."],
     " ": [".....", ".....", ".....", ".....", ".....", ".....", "....."]
   };
   const ROWS = 8;
@@ -101,6 +106,21 @@
     el.innerHTML = html;
   });
 
+  /* ---------- Pathway gauge: from general to surgical competence ----------
+     One dot per step of the track; dots up to the current position are lit, the head blinks. */
+  const gauge = document.getElementById("gauge");
+  if (gauge) {
+    const W = 1152, GAP = 12, n = Math.floor(W / GAP), at = +gauge.dataset.progress || 0;
+    const head = Math.round((n - 1) * at), stations = [0, Math.round(n / 3), Math.round(2 * n / 3)];
+    let dotsSvg = "";
+    for (let i = 0; i < n; i++) {
+      const st = stations.includes(i), cls = i < head ? "lit" : i === head ? "head" : "off";
+      dotsSvg += `<circle class="${cls}${st ? " st" : ""}" cx="${i * GAP + GAP / 2}" cy="12" r="${st ? 5 : 2.6}"/>`;
+    }
+    gauge.setAttribute("viewBox", `0 0 ${W} 24`);
+    gauge.innerHTML = dotsSvg;
+  }
+
   /* ---------- Footer: contact from config.js, current year ---------- */
   const mail = typeof V.contact === "string" && /^[^\s@]+@[^\s@]+$/.test(V.contact) ? V.contact : null;
   document.querySelectorAll("[data-contact]").forEach((row) => {
@@ -166,7 +186,7 @@
   const loop = document.getElementById("steps");
   if (mx) {
     const ctx = mx.getContext("2d"), css = getComputedStyle(document.documentElement);
-    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["See", "Seek", "Reason", "Evolve"], lines = ["surgical video", "surgical knowledge", "over evidence", "from its own trajectories"];
+    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["Understand", "Solve", "Evolve"], lines = ["Can a general model understand surgery?", "Can an agent solve it with tools?", "Can it evolve toward competence?"];
     const cells = [];
     for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
       const x = i - R, y = j - R;
@@ -175,34 +195,32 @@
     // Levels: 0 off, 1 brand, 2 signal (live), 3 faint
     const near = (a, b, w) => Math.abs(a - b) < w;
     const scenes = [
-      (x, y, t) => { // See: an eye that looks around
+      (x, y, t) => { // Understand: an eye that looks around
         const half = 7.2 * (1 - (x / 13.5) ** 2), px = 4 * Math.sin(t * 1.3), py = 1.2 * Math.sin(t * 0.7);
         if (Math.abs(x) <= 13.5 && near(Math.abs(y), half, 0.62)) return 1;
         const d = Math.hypot(x - px, y - py);
         if (Math.abs(y) < half - 0.4 && d <= 4.6) return d <= 1.6 ? 0 : (Math.hypot(x - px - 1.6, y - py + 1.6) < 0.8 ? 2 : 1);
         return 0;
       },
-      (x, y, t) => { // Seek: a lens sweeping over lines of text; what it covers lights up
-        const cx = -2 + 5 * Math.sin(t * 0.9), cy = -2 + 3 * Math.cos(t * 0.6), d = Math.hypot(x - cx, y - cy);
-        if (near(d, 6.4, 0.75)) return 1;
-        const ux = (x - cx) / Math.SQRT2 + (y - cy) / Math.SQRT2, uy = (x - cx) / Math.SQRT2 - (y - cy) / Math.SQRT2;
-        if (ux > 7 && ux < 15 && Math.abs(uy) < 1.3) return 1;
-        const line = (y + 11) % 4 === 0 && Math.abs(x) <= 11 && (x + 3 * y) % 7 !== 0;
-        if (line) return d < 5.6 ? 2 : 3;
-        return 0;
-      },
-      (() => { // Reason: a signal travels through a graph of evidence
-        const P = [[-10, -4], [-4, -10], [-3, 1], [4, -5], [10, -1], [3, 8], [-8, 7]];
-        const E = [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [2, 5], [5, 4], [6, 2], [6, 5]];
-        const path = [6, 2, 3, 4, 5, 2, 0, 1, 3];
-        const seg = (x, y, a, b) => { const [ax, ay] = P[a], [bx, by] = P[b], dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
-          const u = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / L)); return Math.hypot(x - ax - u * dx, y - ay - u * dy); };
+      (() => { // Solve: the agent calls its tools one after another; each call goes out, the tool works, the result comes back
+        const T = [[-9, -8], [9, -8], [9, 8], [-9, 8]], CALL = 1.3;
+        const onSpoke = (x, y, [tx, ty]) => { const L = Math.hypot(tx, ty), u = (x * tx + y * ty) / (L * L); if (u < 0.22 || u > 0.78) return false; return Math.hypot(x - u * tx, y - u * ty) < 0.5; };
         return (x, y, t) => {
-          const k = (t * 1.6) % (path.length - 1), i = Math.floor(k), f = k - i, a = P[path[i]], b = P[path[i + 1]];
-          const sx = a[0] + (b[0] - a[0]) * f, sy = a[1] + (b[1] - a[1]) * f;
-          if (Math.hypot(x - sx, y - sy) < 1.3) return 2;
-          for (const [qx, qy] of P) if (Math.hypot(x - qx, y - qy) < 1.75) return 1;
-          for (const [u, v] of E) if (seg(x, y, u, v) < 0.5) return 3;
+          const k = Math.floor(t / CALL) % T.length, f = (t / CALL) % 1, [tx, ty] = T[k];
+          const g = f < 0.4 ? f / 0.4 : f < 0.6 ? 1 : 1 - (f - 0.6) / 0.4; // out, work, back
+          const px = Math.round(tx * g * 0.78), py = Math.round(ty * g * 0.78);
+          if (f < 0.4 || f > 0.6) { if (x === px && y === py) return 2; }
+          for (let i = 0; i < T.length; i++) {
+            const [qx, qy] = T[i], dx = Math.abs(x - qx), dy = Math.abs(y - qy);
+            if (dx <= 2 && dy <= 2) {
+              if (i === k && f >= 0.4 && f <= 0.6) return 2;               // the tool at work
+              if (dx === 2 || dy === 2) return 1;
+              return i === k && f > 0.6 && dx + dy === 0 ? 2 : 0;
+            }
+          }
+          const d = Math.abs(x) + Math.abs(y);
+          if (d <= 3) return d === 3 || d === 0 ? 1 : 0;                    // the agent
+          for (const q of T) if (onSpoke(x, y, q) && (Math.abs(x) + Math.abs(y)) % 2 === 0) return 3;
           return 0;
         };
       })(),
@@ -245,7 +263,7 @@
     new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(mx);
     function tick(now) {
       if (visible && now - lastDraw > 66) { // ~15 fps: stepwise, like an instrument display
-        if (now - lastStepAt > STEP_MS) setStep((step + 1) % 4, now);
+        if (now - lastStepAt > STEP_MS) setStep((step + 1) % scenes.length, now);
         draw(now); lastDraw = now;
       }
       requestAnimationFrame(tick);

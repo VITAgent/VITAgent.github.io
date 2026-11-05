@@ -21,6 +21,7 @@
       <a class="brand" href="./" aria-label="VITAgent home"><span class="dm dm-vita" data-dots="VITAgent" data-label="VITAgent"></span></a>
       <nav aria-label="Main">
         <a href="#concept">Concept</a>
+        <a href="#pathway">Pathway</a>
         <a href="#news">News</a>
         <a href="#artifacts">Artifacts</a>
         <a href="#team">Team</a>
@@ -35,17 +36,16 @@
         <div class="hero-text">
           <h1 id="hero-title"><span class="dm dm-hero dm-vita" data-dots="VITAgent" data-grid data-label="VITAgent"></span></h1>
           <p class="claim">Surgical Intelligence</p>
-          <p class="lede">Agents that watch an operation, look up what they don't know, and learn from their own attempts.</p>
+          <p class="lede">Agents that watch an operation, call tools to solve what they cannot alone, and learn from their own attempts.</p>
         </div>
         <figure class="scope">
           <div class="scope-disc"><canvas id="matrix" aria-hidden="true"></canvas></div>
           <figcaption class="scope-cap">
-            <span class="cap-text" aria-live="polite"><b id="step-name">See</b> <span id="step-line">surgical video</span></span>
-            <span class="steps" id="steps" role="group" aria-label="Steps of the loop">
-              <button type="button" data-step="0" aria-label="See"></button>
-              <button type="button" data-step="1" aria-label="Seek"></button>
-              <button type="button" data-step="2" aria-label="Reason"></button>
-              <button type="button" data-step="3" aria-label="Evolve"></button>
+            <span class="cap-text" aria-live="polite"><b id="step-name">Understand</b> <span id="step-line">Can a general model understand surgery?</span></span>
+            <span class="steps" id="steps" role="group" aria-label="Steps of the pathway">
+              <button type="button" data-step="0" aria-label="Understand"></button>
+              <button type="button" data-step="1" aria-label="Solve"></button>
+              <button type="button" data-step="2" aria-label="Evolve"></button>
             </span>
           </figcaption>
         </figure>
@@ -59,6 +59,36 @@
           </dl>
           <canvas id="vitals" aria-hidden="true"></canvas>
         </div>
+      </div>
+    </section>
+
+    <section class="sec" id="pathway" aria-labelledby="pathway-title">
+      <div class="wrap">
+        <h2 class="title" id="pathway-title">Pathway</h2>
+        <div class="gauge">
+          <svg id="gauge" data-progress="0.72" aria-hidden="true"></svg>
+          <div class="gauge-ends"><span>General model</span><span>Surgical competence</span></div>
+        </div>
+        <ol class="path">
+          <li class="done">
+            <span class="dm dm-num" data-dots="1" data-grid data-boot aria-hidden="true"></span>
+            <h3>Can a general MLLM understand surgery?</h3>
+            <p class="desc">We measure what general multimodal models already know about surgery, on their own.</p>
+            <p class="by"><a class="link" href="bench/">SurgKnow-Bench</a><span class="meta">NeurIPS 2026</span></p>
+          </li>
+          <li class="done">
+            <span class="dm dm-num" data-dots="2" data-grid data-boot aria-hidden="true"></span>
+            <h3>Can a general agent understand surgery by using tools?</h3>
+            <p class="desc">We give the agent tools to perceive the video and retrieve knowledge, and measure how much of the gap it closes.</p>
+            <p class="by"><a class="link" href="gym/">SurgAgentGym</a><a class="link" href="wiki/">SurgWiki</a><a class="link" href="agent/">SurgAgent v1</a><span class="meta">NeurIPS 2026</span></p>
+          </li>
+          <li class="now">
+            <span class="dm dm-num" data-dots="3" data-grid data-boot aria-hidden="true"></span>
+            <h3>How can it evolve toward surgical competence?</h3>
+            <p class="desc">The agent learns from its own trajectories in the Gym.</p>
+            <p class="by"><a class="link" href="evolve/">SurgAgentEvolve</a><a class="link" href="agent/">SurgAgent v2</a><span class="meta">In progress</span></p>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -79,7 +109,7 @@
             <div class="card-body">
               <h3><a href="bench/">SurgKnow-Bench</a></h3>
               <p class="meta">NeurIPS 2026</p>
-              <p class="desc">Can a generalist model look up the surgery it doesn't know?</p>
+              <p class="desc">The boundary of generalist models in surgery.</p>
               <p class="res" data-res="Paper=bench.paper,Code=bench.code,Trajectories=bench.viewer"></p>
             </div>
           </article>
