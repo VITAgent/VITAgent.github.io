@@ -318,16 +318,73 @@
     boots.forEach((el) => io.observe(el));
   }
 
-  /* ---------- System diagram: rows and nodes highlight each other ---------- */
+  /* ---------- System map: how the products fit, drawn on the same dot grid ----------
+     Regions are windows in a field of dots, outlined by lit dots. Edges are runs of dots with
+     packets stepping along them. Hovering a product card highlights its region. */
   const sys = document.getElementById("system");
   if (sys) {
-    if (still) sys.pauseAnimations?.();
-    document.querySelectorAll(".card[data-node]").forEach((row) => {
-      const node = sys.querySelector(`.node[data-node="${row.dataset.node}"]`);
-      if (!node) return;
-      const on = () => node.classList.add("hl"), off = () => node.classList.remove("hl");
-      row.addEventListener("mouseenter", on); row.addEventListener("mouseleave", off);
-      row.addEventListener("focusin", on); row.addEventListener("focusout", off);
+    const C = 14, COLS = 64, ROWS = 28, NS = "http://www.w3.org/2000/svg";
+    sys.setAttribute("viewBox", `0 0 ${COLS * C} ${ROWS * C}`);
+    // x0, y0, x1, y1 are inclusive cell coordinates
+    const R = [
+      { id: "bench",  x0: 2,  y0: 1,  x1: 37, y1: 4,  name: "SurgKnow-Bench",  meta: "evaluation on top of the Gym" },
+      { id: "gym",    x0: 2,  y0: 8,  x1: 37, y1: 21, name: "SurgAgentGym",    meta: "environment" },
+      { id: "video",  x0: 4,  y0: 12, x1: 18, y1: 19, name: "Surgical video",  meta: "perceive", minor: true },
+      { id: "wiki",   x0: 21, y0: 12, x1: 35, y1: 19, name: "SurgWiki",        meta: "retrieve" },
+      { id: "agent",  x0: 48, y0: 9,  x1: 61, y1: 16, name: "SurgAgent",       meta: "agent" },
+      { id: "evolve", x0: 48, y0: 22, x1: 61, y1: 26, name: "SurgAgentEvolve", meta: "self-evolution" }
+    ];
+    const run = (pts) => { const out = []; for (let i = 0; i < pts.length - 1; i++) { const [ax, ay] = pts[i], [bx, by] = pts[i + 1], n = Math.max(Math.abs(bx - ax), Math.abs(by - ay)); for (let k = 0; k < n; k++) out.push([ax + Math.sign(bx - ax) * k, ay + Math.sign(by - ay) * k]); } out.push(pts[pts.length - 1]); return out; };
+    const E = [
+      { cells: run([[47, 11], [38, 11]]), label: "actions", lx: 39, ly: 10.2, ends: ["agent", "gym"] },
+      { cells: run([[38, 14], [47, 14]]), label: "observations", lx: 39, ly: 15.9, ends: ["agent", "gym", "video", "wiki"] },
+      { cells: run([[12, 7], [12, 5]]), label: "", ends: ["bench", "gym"] },
+      { cells: run([[27, 7], [27, 5]]), label: "evaluates", lx: 28.2, ly: 6.4, ends: ["bench", "gym"] },
+      { cells: run([[20, 22], [20, 24], [47, 24]]), label: "trajectories", lx: 22, ly: 23.2, ends: ["gym", "evolve"], live: true },
+      { cells: run([[55, 21], [55, 17]]), label: "next version", lx: 56.2, ly: 19.4, ends: ["evolve", "agent"], gap: true }
+    ];
+    const inside = (r, x, y) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1;
+    const border = (r, x, y) => inside(r, x, y) && (x === r.x0 || x === r.x1 || y === r.y0 || y === r.y1);
+    const onEdge = new Set(E.flatMap((e) => e.cells.map(([x, y]) => x + "," + y)));
+    let bg = "", lines = "", labels = "";
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+      const cx = (x + 0.5) * C, cy = (y + 0.5) * C;
+      const br = R.find((r) => border(r, x, y));
+      if (br) { lines += `<circle class="rd${br.minor ? " minor" : ""}" data-r="${br.id}" cx="${cx}" cy="${cy}" r="2.6"/>`; continue; }
+      if (onEdge.has(x + "," + y)) { lines += `<circle class="ed" cx="${cx}" cy="${cy}" r="1.9"/>`; continue; }
+      if (R.some((r) => inside(r, x, y) && !r.minor && r.id !== "gym") || R.some((r) => r.minor && inside(r, x, y))) continue;
+      if (inside(R[1], x, y)) continue; // the Gym is an open room
+      bg += `<circle cx="${cx}" cy="${cy}" r="1.5"/>`;
+    }
+    R.forEach((r) => {
+      labels += `<rect class="rbg" data-r="${r.id}" x="${(r.x0 + 0.5) * C}" y="${(r.y0 + 0.5) * C}" width="${(r.x1 - r.x0) * C}" height="${(r.y1 - r.y0) * C}" rx="3"/>`;
+      labels += `<text class="rn${r.minor ? " minor" : ""}" x="${(r.x0 + 1.4) * C}" y="${(r.y0 + 2.1) * C}">${esc(r.name)}</text><text class="rm" x="${(r.x0 + 1.4) * C}" y="${(r.y0 + 3.3) * C}">${esc(r.meta)}</text>`;
+    });
+    E.forEach((e) => { if (e.label) labels += `<text class="el" x="${e.lx * C}" y="${e.ly * C}">${esc(e.label)}</text>`; });
+    sys.innerHTML = `<g class="bgd">${bg}</g>${labels}<g>${lines}</g><g id="pk"></g>`;
+
+    // packets: one every 4 cells, stepping along each edge
+    const pk = sys.querySelector("#pk"), packets = [];
+    E.forEach((e) => {
+      for (let i = 0; i < e.cells.length; i += e.gap ? 3 : 4) {
+        const c = document.createElementNS(NS, "circle");
+        c.setAttribute("r", "2.8"); c.setAttribute("class", "pk" + (e.live ? " live" : ""));
+        pk.appendChild(c); packets.push({ c, e, i });
+      }
+    });
+    const place = () => packets.forEach((p) => { const [x, y] = p.e.cells[p.i % p.e.cells.length]; p.c.setAttribute("cx", (x + 0.5) * C); p.c.setAttribute("cy", (y + 0.5) * C); });
+    place();
+    let vis = false, last = 0;
+    new IntersectionObserver((es) => { vis = es[0].isIntersecting; }).observe(sys);
+    const step = (now) => { if (vis && now - last > 160) { packets.forEach((p) => p.i++); place(); last = now; } requestAnimationFrame(step); };
+    if (!still) requestAnimationFrame(step);
+
+    // cards and regions
+    const hl = (id, on) => { sys.querySelectorAll(`[data-r="${id}"]`).forEach((n) => n.classList.toggle("hl", on)); };
+    document.querySelectorAll(".card[data-node]").forEach((card) => {
+      const id = card.dataset.node;
+      card.addEventListener("mouseenter", () => hl(id, true)); card.addEventListener("mouseleave", () => hl(id, false));
+      card.addEventListener("focusin", () => hl(id, true)); card.addEventListener("focusout", () => hl(id, false));
     });
   }
 
