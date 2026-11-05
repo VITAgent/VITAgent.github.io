@@ -60,7 +60,9 @@ h3 { font-size: 20px; line-height: 28px; font-weight: 500; letter-spacing: -0.01
 .dm .dot-off { fill: var(--dot-off); }
 /* Wordmark: VITA (life) in the signal colour; in the hero the shared A blinks like a live reading */
 .dm-vita .gl[data-i="0"], .dm-vita .gl[data-i="1"], .dm-vita .gl[data-i="2"], .dm-vita .gl[data-i="3"] { fill: var(--signal); }
-.dm-hero.dm-vita .gl[data-i="3"] { animation: pulse-a 1.2s linear infinite; }
+/* The A belongs to both words: it alternates between VITA's red and Agent's ink */
+.dm-hero.dm-vita .gl[data-i="3"] { animation: shared-a 1.6s linear infinite; }
+@keyframes shared-a { 0%, 49.9% { fill: var(--signal); } 50%, 100% { fill: var(--ink); } }
 @keyframes pulse-a { 0%, 49% { opacity: 1; } 50%, 100% { opacity: .2; } }
 @media (prefers-reduced-motion: reduce) { .dm-hero.dm-vita .gl[data-i="3"] { animation: none; } }
 .boot .dot-on circle { opacity: 0; transition: opacity .05s steps(1); }
