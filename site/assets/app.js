@@ -28,6 +28,13 @@
     Y: ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."], Z: ["#####", "....#", "...#.", "..#..", ".#...", "#....", "#####"],
     g: [".....", ".....", ".####", "#...#", "#...#", ".####", "....#", ".###."], e: [".....", ".....", ".###.", "#...#", "#####", "#....", ".###."],
     n: [".....", ".....", "####.", "#...#", "#...#", "#...#", "#...#"], t: [".#...", ".#...", "####.", ".#...", ".#...", ".#..#", "..##."],
+    a: [".....", ".....", ".###.", "....#", ".####", "#...#", ".####"], c: [".....", ".....", ".###.", "#....", "#....", "#...#", ".###."],
+    f: ["..##.", ".#..#", ".#...", "###..", ".#...", ".#...", ".#..."], i: ["..#..", ".....", ".##..", "..#..", "..#..", "..#..", ".###."],
+    j: ["...#.", ".....", "..##.", "...#.", "...#.", "...#.", "#..#.", ".##.."], k: ["#....", "#....", "#..#.", "#.#..", "##...", "#.#..", "#..#."],
+    m: [".....", ".....", "##.#.", "#.#.#", "#.#.#", "#...#", "#...#"], o: [".....", ".....", ".###.", "#...#", "#...#", "#...#", ".###."],
+    r: [".....", ".....", "#.##.", "##..#", "#....", "#....", "#...."], s: [".....", ".....", ".####", "#....", ".###.", "....#", "####."],
+    v: [".....", ".....", "#...#", "#...#", "#...#", ".#.#.", "..#.."], w: [".....", ".....", "#...#", "#...#", "#.#.#", "#.#.#", ".#.#."],
+    y: [".....", ".....", "#...#", "#...#", "#...#", ".####", "....#", ".###."],
     " ": [".....", ".....", ".....", ".....", ".....", ".....", "....."]
   };
   const ROWS = 8;
@@ -38,14 +45,21 @@
     let lit = "", off = "";
     glyphs.forEach((g, i) => {
       const x0 = i * (5 + gap);
+      let mine = "";
       for (let y = 0; y < rows; y++) for (let x = 0; x < 5 + (i < glyphs.length - 1 ? gap : 0); x++) {
         const on = x < 5 && g[y] && g[y][x] === "#";
         const c = `<circle cx="${x0 + x + 0.5}" cy="${y + 0.5}" r="${r}"/>`;
-        if (on) lit += c; else if (opts.grid) off += c;
+        if (on) mine += c; else if (opts.grid) off += c;
       }
+      lit += `<g class="gl" data-i="${i}">${mine}</g>`; // one group per letter, so single letters can be styled
     });
     return `<svg viewBox="0 0 ${w} ${rows}" role="img" aria-label="${esc(opts.label || text)}"><g class="dot-off">${off}</g><g class="dot-on">${lit}</g></svg>`;
   }
+  // Section titles are set on the same dot-matrix display as the wordmark; the text stays for screen readers.
+  document.querySelectorAll("h2.title").forEach((h) => {
+    const text = h.textContent.trim();
+    h.innerHTML = `<span class="sr">${esc(text)}</span><span class="dm dm-title" data-dots="${esc(text)}" data-grid data-boot aria-hidden="true"></span>`;
+  });
   document.querySelectorAll("[data-dots]").forEach((el) => {
     el.innerHTML = dots(el.dataset.dots, { grid: el.hasAttribute("data-grid"), rows: +el.dataset.rows || ROWS, label: el.dataset.label });
   });
