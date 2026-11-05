@@ -2,6 +2,9 @@
 // Links: set a public https URL to turn a greyed "soon" label into a live link. null keeps it greyed.
 // Do not link a private repository.
 window.VITAGENT = {
+  // Shown in the footer. Leave null to hide the contact line.
+  contact: null,
+
   links: {
     "gym.code": null,
     "bench.paper": null,
