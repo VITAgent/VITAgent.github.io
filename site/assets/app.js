@@ -3,7 +3,7 @@
    1. Dot-matrix type (wordmark, monograms) rendered as SVG.
    2. Nav state; resource sets that show only public links.
    3. News from config.js; team and institutions from team.js.
-   4. Dot-matrix display cycling through the pathway (Understand, Seek, Evolve).
+   4. Dot-matrix display cycling through the pathway (Understand, Solve, Evolve).
    5. Product emblems; monograms that boot dot by dot; system diagram with travelling packets.
    6. Vital trace. */
 (() => {
@@ -186,7 +186,7 @@
   const loop = document.getElementById("steps");
   if (mx) {
     const ctx = mx.getContext("2d"), css = getComputedStyle(document.documentElement);
-    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["Understand", "Seek", "Evolve"], lines = ["Can a general model understand surgery?", "Can an agent seek what it lacks?", "Can it evolve toward competence?"];
+    const R = 15, N = 2 * R + 1, STEP_MS = 3600, names = ["Understand", "Solve", "Evolve"], lines = ["Can a general model understand surgery?", "Can an agent solve it with tools?", "Can it evolve toward competence?"];
     const cells = [];
     for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
       const x = i - R, y = j - R;
@@ -202,15 +202,28 @@
         if (Math.abs(y) < half - 0.4 && d <= 4.6) return d <= 1.6 ? 0 : (Math.hypot(x - px - 1.6, y - py + 1.6) < 0.8 ? 2 : 1);
         return 0;
       },
-      (x, y, t) => { // Seek: a lens sweeping over lines of text; what it covers lights up
-        const cx = -2 + 5 * Math.sin(t * 0.9), cy = -2 + 3 * Math.cos(t * 0.6), d = Math.hypot(x - cx, y - cy);
-        if (near(d, 6.4, 0.75)) return 1;
-        const ux = (x - cx) / Math.SQRT2 + (y - cy) / Math.SQRT2, uy = (x - cx) / Math.SQRT2 - (y - cy) / Math.SQRT2;
-        if (ux > 7 && ux < 15 && Math.abs(uy) < 1.3) return 1;
-        const line = (y + 11) % 4 === 0 && Math.abs(x) <= 11 && (x + 3 * y) % 7 !== 0;
-        if (line) return d < 5.6 ? 2 : 3;
-        return 0;
-      },
+      (() => { // Solve: the agent calls its tools one after another; each call goes out, the tool works, the result comes back
+        const T = [[-9, -8], [9, -8], [9, 8], [-9, 8]], CALL = 1.3;
+        const onSpoke = (x, y, [tx, ty]) => { const L = Math.hypot(tx, ty), u = (x * tx + y * ty) / (L * L); if (u < 0.22 || u > 0.78) return false; return Math.hypot(x - u * tx, y - u * ty) < 0.5; };
+        return (x, y, t) => {
+          const k = Math.floor(t / CALL) % T.length, f = (t / CALL) % 1, [tx, ty] = T[k];
+          const g = f < 0.4 ? f / 0.4 : f < 0.6 ? 1 : 1 - (f - 0.6) / 0.4; // out, work, back
+          const px = Math.round(tx * g * 0.78), py = Math.round(ty * g * 0.78);
+          if (f < 0.4 || f > 0.6) { if (x === px && y === py) return 2; }
+          for (let i = 0; i < T.length; i++) {
+            const [qx, qy] = T[i], dx = Math.abs(x - qx), dy = Math.abs(y - qy);
+            if (dx <= 2 && dy <= 2) {
+              if (i === k && f >= 0.4 && f <= 0.6) return 2;               // the tool at work
+              if (dx === 2 || dy === 2) return 1;
+              return i === k && f > 0.6 && dx + dy === 0 ? 2 : 0;
+            }
+          }
+          const d = Math.abs(x) + Math.abs(y);
+          if (d <= 3) return d === 3 || d === 0 ? 1 : 0;                    // the agent
+          for (const q of T) if (onSpoke(x, y, q) && (Math.abs(x) + Math.abs(y)) % 2 === 0) return 3;
+          return 0;
+        };
+      })(),
       (x, y, t) => { // Evolve: a turning double helix (each strand drawn as a continuous run of dots)
         if (Math.abs(x) > 13) return 0;
         const A = 6.5, k = 0.3, w = t * 1.8, f = (u) => A * Math.sin(u * k + w);

@@ -150,7 +150,7 @@ Meta (date, written "Nov 2026") · Body (one sentence, may contain links). The n
 A row of chips. Chip = optional mark + label + count in muted. Exactly one selected. Selected chip: ink border and ink text; others: line border, muted text.
 
 ### 3.8 Expressive visuals
-- **Dot-matrix display**: shows the loop (See, Seek, Reason, Evolve). Its own caption names the current step; no separate numbered step list.
+- **Dot-matrix display**: shows the pathway (Understand, Solve, Evolve). Its own caption names the current step; no separate numbered step list.
 - **Vital trace**: beside two dictionary entries that explain the name. Headword large (*vīta*, *agent*), part of speech in muted italics, definition in body text.
 - **System map**: products are tinted regions with a fine dot texture; the Gym is a room outlined by a dense dotted line; relations are dotted lines with packets stepping along them. No background dot field. SurgWiki sits inside SurgAgentGym; SurgAgent exchanges actions and observations with the Gym; SurgKnow-Bench sits on top of the Gym as its evaluation layer; trajectories flow to SurgAgentEvolve, which yields the next SurgAgent. Placed below the product cards; hovering a card highlights its region.
 
@@ -203,7 +203,7 @@ Title, optional one-sentence lead, one module. Nothing else.
 
 ### 5.2 Home page
 1. **Nav**: wordmark left, section links right. No border; it gains a raised surface only once the page scrolls.
-2. **Concept**: wordmark, claim ("Surgical Intelligence"), one sentence; dot-matrix display cycling Understand, Seek, Evolve; vital trace with the *vīta* and *agent* entries.
+2. **Concept**: wordmark, claim ("Surgical Intelligence"), one sentence; dot-matrix display cycling Understand, Solve, Evolve; vital trace with the *vīta* and *agent* entries.
 3. **Pathway**: the research motivation as three questions, in order. A gauge from general model to surgical competence shows how far we are; each question has one sentence, the products that answer it and its status. Numbers are allowed here because the order is the point.
 4. **News**: up to five items.
 5. **Artifacts**: product cards, then the system map.
