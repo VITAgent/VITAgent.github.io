@@ -193,9 +193,16 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .affs .mark { width: 18px; height: 18px; }
 
 /* Footer */
-.foot { padding: var(--sec) 0 48px; }
-.foot-in { display: flex; justify-content: space-between; gap: 16px; font-size: 15px; color: var(--muted); }
-.foot-in a:hover { color: var(--ink); }
+.foot { padding: var(--sec) 0 56px; }
+.foot-grid { display: grid; grid-template-columns: 1fr; gap: 40px 48px; }
+@media (min-width: 760px) { .foot-grid { grid-template-columns: 1fr auto; } .foot-legal { grid-column: 1 / -1; } }
+.foot-mark { display: block; width: 104px; color: var(--ink); }
+.foot-id p { margin-top: 10px; color: var(--muted); font-size: 15px; }
+.foot-links { margin: 0; display: grid; gap: 8px; font-size: 15px; }
+.foot-links div { display: grid; grid-template-columns: 80px auto; gap: 16px; }
+.foot-links dt { color: var(--muted); }
+.foot-links dd { margin: 0; }
+.foot-legal { display: grid; gap: 4px; font-size: 13px; line-height: 20px; color: var(--muted); max-width: 72ch; }
 
 /* Project pages */
 .page-hero { padding: clamp(48px, 8vw, 96px) 0 0; }

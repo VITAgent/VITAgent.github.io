@@ -87,6 +87,14 @@
     el.innerHTML = html;
   });
 
+  /* ---------- Footer: contact from config.js, current year ---------- */
+  const mail = typeof V.contact === "string" && /^[^\s@]+@[^\s@]+$/.test(V.contact) ? V.contact : null;
+  document.querySelectorAll("[data-contact]").forEach((row) => {
+    if (!mail) return;
+    const a = row.querySelector("[data-contact-link]"); a.href = "mailto:" + mail; a.textContent = mail; row.hidden = false;
+  });
+  document.querySelectorAll("[data-year]").forEach((y) => { y.textContent = new Date().getFullYear(); });
+
   /* ---------- News ---------- */
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const niceDate = (d) => { const m = /^(\d{4})[.\-/](\d{1,2})/.exec(String(d)); return m ? `${MONTHS[+m[2] - 1]} ${m[1]}` : String(d); };

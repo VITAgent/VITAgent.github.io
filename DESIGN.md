@@ -60,7 +60,7 @@ One family (Geist). Five roles only. A component uses at most three of them.
 | Meta | 15 / 24 | 400 | muted | facts that support a heading: role, date, venue |
 
 - Mono (Geist Mono) appears only *inside* expressive visuals, where it is data on an instrument. Not in lists, not for dates, not for tags.
-- No all caps, no letter-spacing tricks, no sizes below 15px for anything a reader needs.
+- No all caps, no letter-spacing tricks, no sizes below 15px for anything a reader needs. The only exception is the legal fine print in the footer (13px).
 - Section titles are real titles (40px, ink), not small grey labels in a side column.
 
 ### 2.2 Space
