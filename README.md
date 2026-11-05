@@ -1,14 +1,12 @@
-# VITAgent — Surgical Superintelligence
+# VITAgent: Surgical Intelligence
 
 A small, dependency-free website for the VITAgent research initiative.
 
 ## Pages
 
-- `/`: the initiative and its projects.
-- `/bench/`: SurgAgent, with placeholders for the agent environment, key takeaways and the existing trajectory viewer.
-- `/evolve/`: a minimal SurgAgent Evolve project page.
-
-No paper numbers, experiment results, dataset files or viewer trajectories are bundled.
+- `/`: concept, news, artifacts, team.
+- `/bench/`: SurgKnow-Bench, with placeholders for the environment, takeaways and the trajectory viewer.
+- `/evolve/`: SurgAgentEvolve placeholder.
 
 ## Preview and check
 
@@ -21,7 +19,18 @@ Open `http://127.0.0.1:4173/`. There are no runtime dependencies or build steps.
 
 ## Update content
 
-Edit the page HTML and `site/assets/style.css`. Add approved **public** paper, code, data and viewer URLs in `site/assets/config.js`; null values retain the placeholders. The existing viewer remains separately hosted and versioned. Do not link a private repository as a public code release.
+Day-to-day edits live in `site/assets/config.js`: public links (`null` keeps a label greyed), news, team and partner institutions.
+
+## Design constraints
+
+The rules behind the look are at the top of `site/assets/style.css`. In short:
+
+- Pixels mean signal only: the dot-matrix wordmark and monograms, data, the scope viewport. No pixel body text, mascots or shadows.
+- Colour 85/10/5: lamp white and cool greys, drape teal as the one brand colour, signal red only for "live" and "new".
+- Geist for text, Geist Mono for real data (dates, versions, counts).
+- 8px grid, hairline rules, 2 to 4px radius.
+- One continuous motion (the vital trace). The scope image resolves once on load and on hover. Reduced motion is respected.
+- No dataset frames on the site: the scope image is procedural.
 
 ## Publish on GitHub Pages
 
