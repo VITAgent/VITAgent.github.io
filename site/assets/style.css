@@ -5,7 +5,8 @@
    - Five type roles: display (dot-matrix), title 40, heading 20, body 17, meta 15 muted.
    - Mono only inside expressive visuals.
    - Space on a 4px base: 4-8 inside an element, 32-48 between elements, 128 between sections.
-   - One left edge; no side-label columns. */
+   - One left edge; no side-label columns.
+   - The raised surface is reserved for product cards. */
 :root {
   --surface: #f3f5f5;
   --raised: #ffffff;
@@ -99,7 +100,7 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .steps button:focus-visible { outline: 2px solid var(--brand); outline-offset: 0; border-radius: 50%; }
 
 /* Expressive visual: vital trace with the vīta readout */
-.vitals { margin-top: 96px; background: var(--raised); border-radius: 6px; display: grid; grid-template-columns: 160px 1fr; align-items: center; padding: 20px 24px; gap: 24px; }
+.vitals { margin-top: 96px; display: grid; grid-template-columns: 136px 1fr; align-items: center; gap: 24px; }
 .vitals canvas { width: 100%; height: 88px; display: block; }
 .readout { display: flex; flex-direction: column; }
 .readout b { font-size: 28px; line-height: 32px; font-weight: 500; letter-spacing: -0.02em; margin: 2px 0; }
@@ -133,22 +134,27 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .system .pkt.live { fill: var(--signal); }
 @media (max-width: 640px) { .system { display: none; } }
 
-/* Entities */
-.ents { display: grid; grid-template-columns: 1fr; gap: 8px; margin-inline: -28px; }
-@media (min-width: 760px) { .ents { grid-template-columns: 1fr 1fr; } .ent.feat { grid-column: 1 / -1; } }
-.ent { position: relative; padding: 28px; border-radius: 6px; display: flex; flex-direction: column; transition: background-color var(--move); }
-.ent .dm-mono { width: 22px; color: var(--ink); margin-bottom: 20px; }
-.ent .desc { margin-top: 4px; max-width: 52ch; }
-.ent .meta + .desc { margin-top: 8px; }
-.ent .res { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 15px; }
-.ent .res .meta { color: var(--muted); }
-.ent h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 6px; }
-.ent .res a { position: relative; z-index: 1; }
-.ent:has(h3 a):hover { background: var(--raised); }
-.ent.feat { background: var(--raised); }
-.ent.feat .dm-mono { color: var(--brand); }
-.ent.feat h3 { font-size: 28px; line-height: 36px; }
-@media (max-width: 640px) { .ents { margin-inline: -20px; } .ent { padding: 20px; } }
+/* Product cards: the only raised surfaces on the page (DESIGN.md 3.4) */
+.cards { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 640px) { .cards { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .cards { grid-template-columns: repeat(3, 1fr); } .card.feat { grid-column: span 2; } }
+.card { position: relative; background: var(--raised); border-radius: 8px; padding: 28px; display: flex; flex-direction: column; gap: 28px; transition: transform var(--move); }
+.card .emblem { width: 112px; height: 112px; display: block; }
+.card-body { display: flex; flex-direction: column; flex: 1; }
+.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 8px; }
+.card h3 a:focus-visible { outline: none; }
+.card:has(h3 a:focus-visible) { outline: 2px solid var(--brand); outline-offset: 3px; }
+.card:hover h3 { color: var(--brand); }
+.card h3 { transition: color var(--quick); }
+.card .meta { margin-top: 2px; }
+.card .desc { margin-top: 12px; max-width: 46ch; }
+.card .res { margin-top: auto; padding-top: 20px; display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 15px; }
+.card .res a { position: relative; z-index: 1; }
+@media (min-width: 1000px) {
+  .card.feat { flex-direction: row; align-items: stretch; gap: 40px; }
+  .card.feat .emblem { width: 200px; height: 200px; flex: none; }
+  .card.feat h3 { font-size: 28px; line-height: 36px; }
+}
 
 /* Team */
 .filter { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
@@ -160,8 +166,8 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .team { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 48px 32px; }
 .team > li { display: flex; flex-direction: column; align-items: flex-start; transition: opacity var(--move); }
 .team > li.dim { opacity: .22; }
-.mono-tile { width: 72px; height: 72px; border-radius: 6px; background: var(--raised); display: grid; place-items: center; margin-bottom: 16px; }
-.mono-tile .dm, .mono-tile svg { width: 40px; height: auto; }
+.mono-tile { width: 48px; margin-bottom: 14px; }
+.mono-tile .dm, .mono-tile svg { width: 48px; height: auto; }
 .mono-tile .dot-on { fill: var(--brand); }
 .mono-tile .dot-off { fill: var(--dot-off); }
 .mono-tile img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; filter: grayscale(1) contrast(1.05); }
@@ -187,7 +193,7 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .page-hero .meta { margin-top: 12px; }
 .page-hero .lede { margin-top: 16px; }
 .page-hero .res { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 4px 24px; }
-.slot { background: var(--raised); border-radius: 6px; min-height: 320px; display: grid; place-items: center; color: var(--muted); font-size: 15px; }
+.slot { background-image: radial-gradient(var(--dot-off) 1.6px, transparent 1.8px); background-size: 12px 12px; min-height: 320px; display: grid; place-items: center; color: var(--muted); font-size: 15px; }
 .slot.tall { min-height: 480px; }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

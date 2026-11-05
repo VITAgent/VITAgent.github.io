@@ -4,7 +4,7 @@
    2. Nav state; resource sets that show only public links.
    3. News from config.js; team and institutions from team.js.
    4. Dot-matrix display cycling through the loop (See, Seek, Reason, Evolve), synced with the step list.
-   5. Monograms that boot dot by dot; system diagram with travelling packets.
+   5. Product emblems; monograms that boot dot by dot; system diagram with travelling packets.
    6. Vital trace. */
 (() => {
   const V = window.VITAGENT || { links: {}, news: [] };
@@ -231,6 +231,84 @@
     if (!still) requestAnimationFrame(tick);
   }
 
+  /* ---------- Product emblems: a small dot-matrix screen per product ----------
+     Still by default; animates while the card is hovered or focused (DESIGN.md P3). */
+  const EMB = {
+    // Benchmark: bars rising to their scores, the best one in signal
+    bench: (x, y, t) => {
+      const H = [5, 9, 6, 12, 8], col = Math.floor((x + 7) / 3), inBar = (x + 7) % 3 < 2;
+      if (y === 7) return 3;
+      if (!inBar || col > 4) return 0;
+      const grow = t ? Math.min(1, Math.max(0, t * 1.4 - col * 0.18)) : 1, h = Math.round(H[col] * grow);
+      return y <= 6 && y > 6 - h ? (col === 3 ? 2 : 1) : 0;
+    },
+    // Environment: a bounded room with three tools; the agent walks between them
+    gym: (() => {
+      const tools = [[-4, -3], [4, -4], [2, 4]], path = [[-5, 4], ...tools, [-5, 4]];
+      return (x, y, t) => {
+        const k = (t * 0.9) % (path.length - 1), i = Math.floor(k), f = k - i;
+        const ax = Math.round(path[i][0] + (path[i + 1][0] - path[i][0]) * f), ay = Math.round(path[i][1] + (path[i + 1][1] - path[i][1]) * f);
+        if (x === ax && y === ay) return 2;
+        for (const [tx, ty] of tools) if (Math.abs(x - tx) <= 1 && Math.abs(y - ty) <= 1 && !(x === tx && y === ty)) return 1;
+        if (Math.abs(x) === 7 || Math.abs(y) === 7) return 3;
+        return 0;
+      };
+    })(),
+    // Knowledge base: an open book whose lines are read one by one
+    wiki: (x, y, t) => {
+      const ax = Math.abs(x);
+      if (x === 0 && y >= -5 && y <= 6) return 1;                       // spine
+      if (ax >= 1 && ax <= 6 && (y === -6 + (ax > 3 ? 0 : 1) || y === 6)) return 1; // page edges
+      if (ax === 7 && y >= -5 && y <= 5) return 1;
+      if (ax >= 2 && ax <= 5 && y >= -4 && y <= 4 && (y + 4) % 2 === 0) { // lines of text, read one by one
+        const line = (y + 4) / 2 + (x > 0 ? 5 : 0), reading = Math.floor(t * 3) % 10;
+        return t && line === reading ? 2 : 3;
+      }
+      return 0;
+    },
+    // Agent: a core with a tool call orbiting it
+    agent: (x, y, t) => {
+      const d = Math.abs(x) + Math.abs(y);
+      if (d <= 2) return d === 2 ? 1 : (d === 0 ? 1 : 0);
+      const r = Math.hypot(x, y), a = Math.atan2(y, x), o = t * 2.2 - Math.PI / 4;
+      const ox = Math.round(Math.cos(o) * 5.5), oy = Math.round(Math.sin(o) * 5.5);
+      if (x === ox && y === oy) return 2;
+      if (Math.abs(r - 5.5) < 0.5) return 3;
+      return 0;
+    },
+    // Self-evolution: a turning double helix
+    evolve: (x, y, t) => {
+      const f = (u) => 4.8 * Math.sin(u * 0.45 + t * 1.8 + 0.6);
+      const lo = Math.min(f(x - 0.5), f(x + 0.5)) - 0.5, hi = Math.max(f(x - 0.5), f(x + 0.5)) + 0.5, front = Math.cos(x * 0.45 + t * 1.8 + 0.6) > 0;
+      if (y >= lo && y <= hi) return front ? 1 : 3;
+      if (-y >= lo && -y <= hi) return front ? 3 : 1;
+      return 0;
+    }
+  };
+  document.querySelectorAll("canvas[data-emblem]").forEach((cv) => {
+    const scene = EMB[cv.dataset.emblem]; if (!scene) return;
+    const ctx = cv.getContext("2d"), css = getComputedStyle(document.documentElement), R = 7, N = 15;
+    let t = 0, raf = 0, last = 0, start = 0;
+    function size() { const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1; cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+    function draw() {
+      const col = [css.getPropertyValue("--dot-off").trim(), css.getPropertyValue("--brand").trim(), css.getPropertyValue("--signal").trim(), css.getPropertyValue("--faint").trim()];
+      const c = cv.width / N, rad = c * 0.34;
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+        const lv = scene(i - R, j - R, t);
+        ctx.fillStyle = col[lv]; ctx.beginPath(); ctx.arc((i + 0.5) * c, (j + 0.5) * c, lv ? rad : rad * 0.8, 0, 7); ctx.fill();
+      }
+    }
+    function loop(now) { if (now - last > 80) { t = (now - start) / 1000; draw(); last = now; } raf = requestAnimationFrame(loop); }
+    const card = cv.closest(".card");
+    const play = () => { if (still || raf) return; start = performance.now() - 1; raf = requestAnimationFrame(loop); };
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; t = 0; draw(); };
+    card?.addEventListener("mouseenter", play); card?.addEventListener("mouseleave", stop);
+    card?.addEventListener("focusin", play); card?.addEventListener("focusout", stop);
+    size(); draw();
+    addEventListener("resize", () => { size(); draw(); });
+  });
+
   /* ---------- Monograms boot dot by dot when they scroll into view ---------- */
   const boots = document.querySelectorAll("[data-boot]");
   if (boots.length && !still && "IntersectionObserver" in window) {
@@ -244,7 +322,7 @@
   const sys = document.getElementById("system");
   if (sys) {
     if (still) sys.pauseAnimations?.();
-    document.querySelectorAll(".art[data-node]").forEach((row) => {
+    document.querySelectorAll(".card[data-node]").forEach((row) => {
       const node = sys.querySelector(`.node[data-node="${row.dataset.node}"]`);
       if (!node) return;
       const on = () => node.classList.add("hl"), off = () => node.classList.remove("hl");

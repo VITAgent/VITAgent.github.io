@@ -1,6 +1,6 @@
 # VITAgent interface guideline
 
-Status: **v0.1 draft, for step-by-step review.** Each chapter ends with the decisions to confirm. Nothing here is built yet; the current site will be brought in line once a chapter is confirmed.
+Status: **v0.2. Chapters 1 and 2 confirmed (2026-11-05); 3.4 product card confirmed; the rest is a draft.** Each chapter ends with the decisions to confirm. Nothing here is built yet; the current site will be brought in line once a chapter is confirmed.
 
 The guideline has two layers, built in order:
 
@@ -99,6 +99,10 @@ Allowed:
 
 Not allowed: between sections, between list rows, under the nav, around content blocks.
 
+### 2.6 Surfaces
+
+The raised surface is reserved for **product cards** (3.4). Nothing else on a page sits on a white panel: not monograms, not readouts, not placeholders. This keeps the surface meaning one thing: an independent product you can open.
+
 **Decisions to confirm**
 - [ ] five type roles and sizes; mono only inside visuals
 - [ ] spacing scale and the 48 / 128 rhythm
@@ -126,13 +130,16 @@ The links that belong to a project: Paper, Code, Trajectories.
 - Unavailable resources are **not shown**. Instead the set reads as one Meta line, for example "Code and paper coming soon".
 No greyed-out labels, no "Soon" tags.
 
-### 3.4 Entity (artifact)
-Monogram (dot-matrix, 32px) · Heading (name) · Body (one sentence of what it is) · Resource set.
-The whole entity is one click target when it has its own page.
-Featured entity (the current paper) gets a raised surface, not a coloured bar.
+### 3.4 Product card (confirmed)
+Each artifact is an independent product and is shown as one card.
+- Raised surface, 8px radius, no border. All cards in a set have equal height.
+- Emblem: a 15×15 dot-matrix screen with the product's own scene (Bench: bars, Gym: an agent walking between tools, Wiki: an open book being read, Agent: a tool call orbiting a core, Evolve: a double helix). Still at rest; animates while the card is hovered or focused.
+- Heading (name) · Meta (kind, venue or version) · Body (one sentence) · Resource set at the bottom.
+- The whole card opens the product's own page. Every product has a page.
+- The current paper's card spans two columns, with a larger emblem beside the text.
 
 ### 3.5 Person
-Monogram or photo (72px) · Heading (name) · Meta (role) · affiliation marks (shape only, name on hover).
+Monogram or photo (48px, no tile behind it) · Heading (name) · Meta (role) · affiliation marks (shape only, name on hover).
 
 ### 3.6 News item
 Meta (date, written "Nov 2026") · Body (one sentence, may contain links). The newest item carries the live signal dot.
@@ -161,7 +168,6 @@ Targets at least 24px on desktop and 44px on touch. Links are real links; button
 
 **Decisions to confirm**
 - [ ] hide unavailable resources and replace them with one sentence
-- [ ] featured entity via raised surface instead of a coloured bar
 - [ ] the dot-matrix display replaces the numbered step list
 - [ ] state table
 
