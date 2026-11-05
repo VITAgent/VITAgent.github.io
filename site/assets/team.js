@@ -15,13 +15,12 @@ window.VITAGENT_TEAM = {
   institutions: {
     lmu:         { name: "LMU Munich",                     mark: "ring" },
     tum:         { name: "Technical University of Munich", mark: "plus" },
-    oxford:      { name: "University of Oxford",           mark: "diamond" },
     zeiss:       { name: "Carl Zeiss AG",                  mark: "square" },
     independent: { name: "Independent",                    mark: "cross" }
   },
 
   people: [
-    { name: "Gengyuan Zhang",   role: "Team lead", affiliations: ["lmu", "oxford"],  url: null, photo: null },
+    { name: "Gengyuan Zhang",   role: "Team lead", affiliations: ["lmu"],            url: null, photo: null },
     { name: "Shijie Zhou",      role: null, affiliations: ["tum"],            url: null, photo: null },
     { name: "Xinling Xie",      role: null, affiliations: ["lmu"],            url: null, photo: null },
     { name: "Xiao Han",         role: null, affiliations: ["lmu"],            url: null, photo: null },
