@@ -3,7 +3,7 @@
 // Do not link a private repository.
 window.VITAGENT = {
   // Shown in the footer. Leave null to hide the contact line.
-  contact: null,
+  contact: "gengyuanmax@gmail.com",
 
   links: {
     "gym.code": null,
