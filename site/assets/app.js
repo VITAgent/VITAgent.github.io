@@ -2,12 +2,12 @@
 /* VITAgent site behaviour.
    1. Dot-matrix type (wordmark, monograms) rendered as SVG.
    2. Links that switch on when config.js has a public URL.
-   3. News, team, partners from config.js.
+   3. News from config.js; team and institutions from team.js.
    4. Dot-matrix display cycling through the loop (See, Seek, Reason, Evolve), synced with the step list.
    5. Monograms that boot dot by dot; system diagram with travelling packets.
    6. Vital trace. */
 (() => {
-  const V = window.VITAGENT || { links: {}, news: [], team: [], partners: [] };
+  const V = window.VITAGENT || { links: {}, news: [] };
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -64,14 +64,38 @@
   /* ---------- News, team, partners ---------- */
   const news = document.getElementById("news-list");
   if (news) news.innerHTML = V.news.map((n, i) => `<li${i === 0 ? ' class="new"' : ""}><time>${esc(n.date)}</time><span>${esc(n.text)}</span></li>`).join("");
+  /* ---------- Team (data in team.js) ---------- */
+  const T = window.VITAGENT_TEAM || { institutions: {}, people: [] };
+  const instKeys = Object.keys(T.institutions);
+  // Each institution gets a marker of 1-4 dots, so affiliations are told apart without relying on colour.
+  const MARKS = [["....", ".#..", "....", "...."], ["....", "#.#.", "....", "...."], [".#..", "....", "#.#.", "...."], ["#.#.", "....", "#.#.", "...."]];
+  function mark(key) {
+    const m = MARKS[instKeys.indexOf(key) % MARKS.length] || MARKS[0];
+    let c = "";
+    m.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === "#") c += `<circle cx="${x + 0.5}" cy="${y + 0.5}" r="0.42"/>`; }));
+    return `<svg class="mark" viewBox="0 0 3 3" aria-hidden="true">${c}</svg>`;
+  }
   const team = document.getElementById("team-list");
-  if (team) team.innerHTML = V.team.map((m) => {
+  if (team) team.innerHTML = T.people.map((m) => {
     const ini = m.name.split(/\s+/).map((p) => p[0]).join("").slice(0, 2).toUpperCase();
     const name = m.url ? `<a href="${esc(m.url)}">${esc(m.name)}</a>` : esc(m.name);
-    return `<li><div class="mono-tile" data-boot>${dots(ini, { rows: 7, grid: true, label: m.name })}</div><b>${name}</b>${m.role ? `<span>${esc(m.role)}</span>` : ""}</li>`;
+    const face = m.photo ? `<img src="${esc(m.photo)}" alt="" loading="lazy">` : dots(ini, { rows: 7, grid: true, label: m.name });
+    const affs = (m.affiliations || []).filter((k) => T.institutions[k]).map((k, i) =>
+      `<li class="${i === 0 ? "primary" : ""}" title="${esc(T.institutions[k].name)}">${mark(k)}${esc(T.institutions[k].short || T.institutions[k].name)}</li>`).join("");
+    return `<li data-aff="${esc((m.affiliations || []).join(" "))}"><div class="mono-tile"${m.photo ? "" : " data-boot"}>${face}</div><b>${name}</b>${m.role ? `<span>${esc(m.role)}</span>` : ""}<ul class="affs">${affs}</ul></li>`;
   }).join("");
-  const partners = document.getElementById("partner-list");
-  if (partners) partners.innerHTML = V.partners.map((p) => `<li>${esc(p)}</li>`).join("");
+  const filter = document.getElementById("aff-filter");
+  if (filter && team) {
+    const count = (k) => T.people.filter((p) => (p.affiliations || []).includes(k)).length;
+    filter.innerHTML = `<li><button type="button" data-aff="" aria-pressed="true">All<i>${T.people.length}</i></button></li>` +
+      instKeys.map((k) => `<li><button type="button" data-aff="${esc(k)}" aria-pressed="false">${mark(k)}${esc(T.institutions[k].name)}<i>${count(k)}</i></button></li>`).join("");
+    filter.addEventListener("click", (e) => {
+      const b = e.target.closest("button"); if (!b) return;
+      const k = b.dataset.aff;
+      filter.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      team.querySelectorAll(":scope > li").forEach((li) => li.classList.toggle("dim", !!k && !li.dataset.aff.split(" ").includes(k)));
+    });
+  }
 
   /* ---------- Dot-matrix display: the four steps of the loop ---------- */
   const mx = document.getElementById("matrix");

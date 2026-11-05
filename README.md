@@ -19,7 +19,8 @@ Open `http://127.0.0.1:4173/`. There are no runtime dependencies or build steps.
 
 ## Update content
 
-Day-to-day edits live in `site/assets/config.js`: public links (`null` keeps a label greyed), news, team and partner institutions.
+- **Team**: edit `site/assets/team.js` only. Add institutions once, then list people with their `affiliations` (the first is the primary one, highlighted). Each institution gets its own dot marker and appears in the filter row automatically. Photos are optional (`photo: "assets/team/name.webp"`, square, at least 160px); without one the page shows a dot-matrix monogram.
+- **Links and news**: `site/assets/config.js`. A link stays greyed until it has a public `https://` URL.
 
 ## Design constraints
 

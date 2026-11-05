@@ -16,15 +16,7 @@ window.VITAGENT = {
   news: [
     { date: "2026.11", text: "SurgKnow-Bench accepted to NeurIPS 2026 Datasets & Benchmarks." },
     { date: "2026.11", text: "VITAgent site launched." }
-  ],
+  ]
 
-  // Monograms are generated from the initials. role is optional.
-  team: [
-    { name: "Gengyuan Zhang", role: "LMU Munich", url: null },
-    { name: "Team member", role: "Affiliation", url: null },
-    { name: "Team member", role: "Affiliation", url: null },
-    { name: "Team member", role: "Affiliation", url: null }
-  ],
-
-  partners: ["LMU Munich", "TU Munich", "University of Oxford", "Carl Zeiss AG"]
+  // Team and institutions live in team.js.
 };
