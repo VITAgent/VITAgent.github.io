@@ -6,6 +6,7 @@ Status: **Implemented site. Current decisions confirmed 2026-11-13.** The curren
 
 - Keep the original dot-matrix VITAgent wordmark and animation. Keep the agreed slogan text, its uniform 24/32 desktop and 20/28 mobile size, and no hero action links.
 - Main navigation: Home, Explorer, Research, About us. Home section names stay Pathway and Artifacts. Pathway explains concepts only; no links or status rows. No Explore further section.
+- Artifacts has one sidebar entry, linking to its first screen. Both Artifacts screens highlight that same entry; do not split navigation into numbered entries.
 - Home has five scroll stops: Overview; Pathway + News; Artifacts cards; Artifacts relationship diagram; Team with the footer. Use native document scroll snapping, not wheel interception. Panels have a minimum viewport height and can grow. Narrow/short viewports use proximity snapping; reduced motion disables snapping and animated scrolling.
 - Geist Sans for headings and UI; Geist Serif Regular for prose. Dot-matrix titles remain a brand exception. Serif is self-hosted from geist 1.9.2 with its OFL licence. Its current face has only a regular weight; strong text uses browser-synthesized emphasis rather than claiming a native bold face.
 

@@ -322,7 +322,6 @@ nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text
 .home-story { --home-header: 72px; scroll-padding-top: var(--home-header); scroll-snap-type: y proximity; }
 .home-panel { min-height: calc(100svh - var(--home-header)); padding-block: 48px; display: flex; flex-direction: column; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; }
 .home-panel > .sec { padding-top: 0; }
-.home .section-rail small { display: block; color: var(--muted); font-size: 12px; line-height: 16px; text-decoration: none; }
 .home .system { display: block; margin-top: 0; }
 .home .system svg { max-height: calc(100svh - 240px); }
 .home .pathway-news { gap: 48px; }
@@ -368,7 +367,6 @@ nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text
   .home-story { --home-header: 96px; }
   .home-panel { padding-block: 40px; }
   .home .scope { width: min(100% - 32px, 280px); }
-  .home .section-rail small { display: inline; margin-left: 4px; }
   .home .card { padding: 24px; gap: 20px; }
   .home .card .emblem { width: 72px; height: 72px; }
   .home .team { gap: 32px 24px; }

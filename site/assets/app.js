@@ -95,12 +95,14 @@
     if (secs.length && "IntersectionObserver" in window) {
       const io = new IntersectionObserver((es) => es.forEach((e) => {
         if (!e.isIntersecting) return;
+        const activeId = e.target.dataset.railTarget || e.target.id;
         links.forEach((a, i) => {
-          if (secs[i] === e.target) a.setAttribute("aria-current", "location");
+          if (secs[i]?.id === activeId) a.setAttribute("aria-current", "location");
           else a.removeAttribute("aria-current");
         });
       }), { rootMargin: "-40% 0px -55% 0px" });
-      secs.filter(Boolean).forEach((s) => io.observe(s));
+      const observed = new Set([...secs, ...document.querySelectorAll("[data-rail-target]")]);
+      observed.forEach((s) => { if (s) io.observe(s); });
     }
   }
 
