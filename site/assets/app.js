@@ -70,16 +70,26 @@
   });
 
   /* ---------- Nav: raised once scrolled; current section marked ---------- */
+  const sectionRail = document.querySelector(".section-rail");
+  if (sectionRail) {
+    const compact = matchMedia("(max-width: 1199px)");
+    const setRail = () => { sectionRail.open = !compact.matches; };
+    setRail();
+    compact.addEventListener("change", setRail);
+  }
   const top = document.getElementById("top");
   if (top) {
     const onScroll = () => top.classList.toggle("scrolled", scrollY > 8);
     addEventListener("scroll", onScroll, { passive: true }); onScroll();
-    const links = [...top.querySelectorAll('nav a[href^="#"]')];
+    const links = [...document.querySelectorAll('[data-section-nav] a[href^="#"]')];
     const secs = links.map((a) => document.querySelector(a.getAttribute("href"))).filter(Boolean);
     if (secs.length && "IntersectionObserver" in window) {
       const io = new IntersectionObserver((es) => es.forEach((e) => {
         if (!e.isIntersecting) return;
-        links.forEach((a) => a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + e.target.id)));
+        links.forEach((a) => {
+          if (a.getAttribute("href") === "#" + e.target.id) a.setAttribute("aria-current", "location");
+          else a.removeAttribute("aria-current");
+        });
       }), { rootMargin: "-40% 0px -55% 0px" });
       secs.forEach((s) => io.observe(s));
     }
@@ -133,7 +143,11 @@
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const niceDate = (d) => { const m = /^(\d{4})[.\-/](\d{1,2})/.exec(String(d)); return m ? `${MONTHS[+m[2] - 1]} ${m[1]}` : String(d); };
   const news = document.getElementById("news-list");
-  if (news) news.innerHTML = V.news.map((n, i) => `<li${i === 0 ? ' class="new"' : ""}><time>${esc(niceDate(n.date))}</time><span>${esc(n.text)}</span></li>`).join("");
+  if (news) news.innerHTML = V.news.map((n, i) => {
+    const url = publicUrl(n.resource);
+    const more = url ? ` <a class="link" href="${esc(url)}">${esc(n.label || "Read more")}</a>` : "";
+    return `<li${i === 0 ? ' class="new"' : ""}><time>${esc(niceDate(n.date))}</time><span>${esc(n.text)}${more}</span></li>`;
+  }).join("");
 
   /* ---------- Team (data in team.js) ---------- */
   const T = window.VITAGENT_TEAM || { institutions: {}, people: [] };

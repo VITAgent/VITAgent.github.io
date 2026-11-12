@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f5f5">
+  <link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../assets/style.css">
+  <script src="../../assets/config.js" defer></script>
+  <script src="../../assets/app.js" defer></script>
+  <meta name="description" content="A companion to the VITAgent preprint: diagnosing surgical understanding with SurgKnow-Bench, studying tools in SurgAgentGym, and interpreting the results.">
+  <title>How to “train” a surgeon? — VITAgent</title>
+  <link rel="canonical" href="https://vitagent.github.io/blog/how-to-train-a-surgeon/">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top" id="top">
+    <div class="wrap top-in">
+      <a class="brand" href="../../" aria-label="VITAgent home"><span class="dm dm-vita" data-dots="VITAgent" data-label="VITAgent"></span></a>
+      <nav aria-label="Main">
+        <a href="../../">Home</a>
+        <a href="../../explorer/">Explorer</a>
+        <a href="../../blog/" aria-current="page">Blog</a>
+        <a href="https://github.com/VITAgent">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="paper-companion wrap">
+      <header class="page-hero">
+        <p class="meta"><a class="link" href="../">Blog</a> · <time datetime="2026-11-12">12 November 2026</time> · Paper companion</p>
+        <h1>How to “train”<br>a surgeon?</h1>
+        <p class="article-deck">Benchmarking generalist agents in surgical scene understanding</p>
+        <p class="lede">What does a generalist model already understand about surgery—and how much further can it go with tools?</p>
+        <div class="reading-links"><a class="link" href="https://arxiv.org/abs/2611.11437">Read on arXiv</a><a class="link" href="https://arxiv.org/pdf/2611.11437">PDF</a><a class="link" href="../../#pathway">Project map</a></div>
+        <p class="meta">Preprint released 8 November 2026 · Accepted at NeurIPS 2026, Evaluations and Datasets Track</p>
+      </header>
+      <nav class="reading-nav" aria-label="In this article"><a class="link" href="#question">The question</a><a class="link" href="#benchmarking">Benchmarking</a><a class="link" href="#harness">The harness</a><a class="link" href="#findings">Findings</a><a class="link" href="#next">What comes next</a></nav>
+      <div class="prose">
+        <section id="question">
+          <h2>A question in two stages</h2>
+          <p>Surgical understanding spans several kinds of reasoning: recognizing an instrument, identifying an action, locating a scene within an operation, and assessing the quality of a procedure. A model that succeeds at one may still struggle with another.</p>
+          <p>Our paper starts by diagnosing these capabilities in general-purpose multimodal models. It then asks whether agents can improve at inference time by seeking knowledge and grounding visual evidence, without additional surgical training. The quotation marks around “train” point to that distinction: the intervention here is access to an environment and tools.</p>
+          <p>This companion follows the paper’s two stages. The <a class="link" href="https://arxiv.org/html/2611.11437v1">full paper</a> contains the protocols, comparisons, and detailed results.</p>
+        </section>
+        <section id="benchmarking">
+          <h2>First, find the boundary</h2>
+          <p><a class="link" href="../../bench/">SurgKnow-Bench</a>—SurgKnowBench in the paper—harmonizes 11 public datasets across seven surgical procedures and seven task axes. Its 376,602 samples organize surgical understanding into three families:</p>
+          <ul>
+            <li><strong>Spatial recognition:</strong> tool detection, tool localization, and instrument–verb–target triplets.</li>
+            <li><strong>Temporal reasoning:</strong> phase and action recognition.</li>
+            <li><strong>Workflow assessment:</strong> critical-view-of-safety and surgical skill assessment.</li>
+          </ul>
+          <p>Stage I evaluates direct answers to establish what pretrained models can do on their own. Keeping the task families visible matters: an aggregate score can hide a model that recognizes objects but fails to understand their relations or the procedural context.</p>
+          <p class="meta">Reading route: Section 2 for the benchmark; Appendix C for construction and metrics.</p>
+        </section>
+        <section id="harness">
+          <h2>Then, make evidence accessible</h2>
+          <p><a class="link" href="../../gym/">SurgAgentGym</a> provides the environment for Stage II, evaluated on the 952-sample SurgKnowBench-Hard subset. The agent receives a task, visual input, an answer contract, and bounded access to tools.</p>
+          <dl class="concept-definitions">
+            <div><dt>See</dt><dd>The visual grounding tool returns region proposals and a numbered overlay of the current input. The agent still has to interpret what those regions mean.</dd></div>
+            <div><dt>Search</dt><dd>The retrieval tool queries <a class="link" href="../../wiki/">SurgWiki</a>, drawing on textbooks, guidelines, tutorial videos, and case records.</dd></div>
+            <div><dt>Submit</dt><dd>The agent combines its observations into a final answer. The harness enforces the tool interface and budgets, and records the trajectory.</dd></div>
+          </dl>
+          <p>The projects have different roles: SurgKnow-Bench defines the evaluation tasks; SurgAgentGym executes the interaction; SurgWiki supplies knowledge; <a class="link" href="../../agent/">SurgAgent</a> is the reference agent. A trajectory connects them by showing what the agent did with the evidence it could access.</p>
+          <p class="meta">Reading route: Sections 3 and 4.1 for tools and the harness; Appendix D for implementation.</p>
+          <p><a class="link" href="../../explorer/">Explorer</a> will bring the viewer and demos together. It is currently under construction.</p>
+        </section>
+        <section id="findings">
+          <h2>Tools help, unevenly</h2>
+          <p>The results show partial surgical competence in pretrained models and task-dependent gains from agentic inference. Improvements are most consistent in perception-heavy recognition tasks. Fine-grained localization, relational understanding, and expert-style assessment remain difficult.</p>
+          <p>Two comparisons answer different questions. The across-stage comparison measures the move from direct answers to the full agent setting. The matched tool comparison holds the agent setup and prompts fixed while switching tool access off and on. The latter is the more focused test of the contribution of tools.</p>
+          <p>Improvement also needs to be read alongside absolute performance. Likewise, an apparently strong assessment accuracy may reflect common rubric values rather than meaningful agreement with expert judgments. The paper reports task-specific metrics and analyzes these failure modes.</p>
+          <p class="meta">Reading route: Section 2.3 for the diagnostic findings; Section 4.2 and Table 3 for the agent comparisons; Appendix E for extended results.</p>
+        </section>
+        <section id="next">
+          <h2>From evidence use to improvement</h2>
+          <p>The current paper establishes the benchmark and the agentic environment. VITAgent’s wider research direction asks how an agent might learn from its own attempts and improve how it uses that environment.</p>
+          <p><a class="link" href="../../evolve/">SurgAgentEvolve</a> explores this next step toward recursive surgical superintelligence. It is ongoing work; recursive improvement is a research direction beyond the results reported in this preprint.</p>
+          <div class="reading-links"><a class="link" href="../../#artifacts">See the connected projects</a><a class="link" href="../../explorer/">Visit Explorer</a></div>
+        </section>
+        <section id="paper">
+          <h2>The paper</h2>
+          <p>Gengyuan Zhang, Xiao Han, Shijie Zhou, Abdullah Koukash, Jingpei Wu, Jindong Gu, Yuqicheng Zhu, Nassir Navab, Volker Tresp, and Ghazal Ghazaei.</p>
+          <p><a class="link" href="https://arxiv.org/abs/2611.11437">How to “train” a surgeon? Benchmarking generalist agents in surgical scene understanding.</a> arXiv:2611.11437, 2026.</p>
+          <p class="meta">This companion follows the public v1 preprint. Refer to the paper for the full experimental scope and limitations.</p>
+        </section>
+      </div>
+    </article>
+  </main>
+  <footer class="foot">
+    <div class="wrap foot-grid">
+      <div class="foot-id">
+        <a class="foot-mark" href="../../" aria-label="VITAgent home"><span class="dm" data-dots="VITAgent" data-label="VITAgent"></span></a>
+        <p>Surgical agents for surgical understanding</p>
+      </div>
+      <dl class="foot-links">
+        <div data-contact hidden><dt>Contact</dt><dd><a class="link" data-contact-link href="#">email</a></dd></div>
+        <div><dt>GitHub</dt><dd><a class="link" href="https://github.com/VITAgent">github.com/VITAgent</a></dd></div>
+      </dl>
+      <div class="foot-legal">
+        <p>© <span data-year>2026</span> VITAgent. All rights reserved.</p>
+        <p>Code, data and models are released under the licences stated in each repository. Surgical datasets and knowledge sources remain with their owners; this site grants no licence to them.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

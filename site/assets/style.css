@@ -244,3 +244,69 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .slot.tall { min-height: 480px; }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Shared reading elements; keep article text outside the dot-matrix register. */
+nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-underline-offset: 6px; }
+.research-headline { font-size: 40px; line-height: 48px; font-weight: 500; letter-spacing: -0.02em; }
+.research-headline > span { display: block; font-size: 20px; line-height: 28px; letter-spacing: -0.01em; margin-top: 16px; }
+.hero-text .lede { max-width: 48ch; margin-top: 24px; }
+.hero-grid > * { min-width: 0; }
+.reading-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 24px; }
+.reading-links a { min-height: 28px; }
+.entry-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px; }
+.entry-list article > p { margin-top: 12px; max-width: 52ch; }
+.entry-list .reading-links { font-size: 15px; }
+.section-lead { max-width: 68ch; }
+.construction { min-height: 42vh; }
+.construction h2, .post-preview h2 { font-size: 32px; line-height: 40px; font-weight: 500; letter-spacing: -0.02em; }
+.construction p { max-width: 56ch; margin-top: 16px; }
+.post-preview { max-width: 68ch; }
+.post-preview h2 { margin: 16px 0; }
+.paper-companion { max-width: 900px; }
+.paper-companion .page-hero h1 { margin-top: 24px; font-size: clamp(48px, 7vw, 80px); }
+.article-deck { font-size: 24px; line-height: 32px; margin-top: 24px; max-width: 34ch; }
+.paper-companion .lede { max-width: 58ch; }
+.paper-companion .page-hero > .meta:last-child { margin-top: 24px; }
+.reading-nav { margin: 48px 0 0; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.prose { max-width: 68ch; }
+.prose section { margin-top: 64px; scroll-margin-top: 96px; }
+.prose h2 { font-size: 32px; line-height: 40px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 24px; }
+.prose p + p, .prose ul + p { margin-top: 20px; }
+.prose ul { padding-left: 24px; margin-top: 20px; }
+.prose li + li { margin-top: 12px; }
+.prose strong { font-weight: 500; }
+.concept-definitions { margin: 32px 0; display: grid; gap: 24px; }
+.concept-definitions dt { font-weight: 500; font-size: 20px; }
+.concept-definitions dd { margin: 8px 0 0; }
+
+/* Page navigation and section location are separate layers. */
+.section-rail { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 4; }
+.section-rail summary { display: none; }
+.section-rail nav { display: flex; flex-direction: column; gap: 12px; margin: 0; }
+.section-rail a { display: flex; align-items: center; gap: 10px; font-size: 15px; padding: 8px 0; min-height: 44px; }
+.rail-dots { display: grid; grid-template-columns: repeat(3, 3px); gap: 3px; flex: none; }
+.rail-dots i { width: 3px; height: 3px; border-radius: 50%; background: var(--faint); }
+.section-rail a:hover .rail-dots i, .section-rail a[aria-current="location"] .rail-dots i { background: var(--brand); }
+.section-rail a[aria-current="location"] { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; }
+.section-rail a[aria-current="location"] .rail-dots i:nth-child(even) { background: var(--surface); }
+@media (min-width: 1200px) { .has-section-rail .wrap { width: min(var(--wrap), 100% - 336px); } }
+@media (max-width: 1199px) {
+  .section-rail { position: static; transform: none; width: min(var(--wrap), 100% - 2 * var(--g)); margin: 16px auto 0; }
+  .section-rail summary { display: list-item; cursor: pointer; color: var(--muted); font-size: 15px; padding: 8px 0; }
+  .section-rail nav { flex-direction: row; flex-wrap: wrap; gap: 0 24px; padding: 8px 0; }
+  .section-rail:not([open]) nav { display: none; }
+}
+@media (max-width: 640px) {
+  html { scroll-padding-top: 120px; }
+  .top-in { height: auto; min-height: 96px; padding-block: 12px; flex-wrap: wrap; gap: 8px; }
+  .top nav { width: 100%; margin-left: 0; justify-content: space-between; gap: 16px; }
+  .top nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  .research-headline { font-size: 32px; line-height: 40px; }
+  .research-headline > span { font-size: 20px; line-height: 28px; }
+  .entry-list { grid-template-columns: 1fr; gap: 48px; }
+  .reading-links { gap: 8px 24px; }
+  .reading-links a, .reading-nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  .prose section { scroll-margin-top: 120px; }
+  .prose h2, .construction h2, .post-preview h2 { font-size: 28px; line-height: 36px; }
+  .dm.dm-title svg { max-width: 100%; height: auto; max-height: 36px; }
+}

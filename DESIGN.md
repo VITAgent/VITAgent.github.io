@@ -221,6 +221,28 @@ Title, one sentence, resource set, then sections that each hold one module (figu
 
 ## 6. Gap to the current site
 
+### November 2026 site structure
+
+The primary navigation is Home, Explorer, Blog, and the public GitHub organization.
+The home page has a separate side rail for section location, with a 3×3 dot-matrix
+marker; its selected cross and underlined label identify the current section. On
+smaller screens this becomes a collapsible text navigation.
+Home introduces the initiative and maps its research; product pages remain stable
+destinations. Explorer is a separate viewer/demo destination and currently reads
+“Under construction”. Blog holds paper companions, with section links back to the
+relevant projects. Shared concepts connect across these pages rather than becoming
+duplicate project descriptions.
+
+The existing large animated dot-matrix VITAgent wordmark stays in the hero.
+The headline beneath it is plain Geist text, with the research directions on a
+second line at Heading size. The navigation also retains its wordmark. Paper
+announcements and article listings are unboxed text groups using Heading, Body,
+Meta, and text links. Reading navigation is a wrapping list of text links. Article
+headings use plain text for readability; article paragraphs have a 68ch measure.
+An under-construction notice is plain text with a status word and useful links,
+without a faux viewer or invented data. These extend the existing text/link
+elements; no new decorative surfaces or visuals are introduced.
+
 What changes once the chapters above are confirmed:
 
 | Now | Violates | Becomes |

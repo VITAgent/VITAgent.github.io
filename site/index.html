@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="VITAgent: surgical intelligence. Agents that see surgical video, seek knowledge, reason and evolve.">
+  <meta name="description" content="Surgical agents for surgical understanding: benchmarking, agentic harness, and recursive surgical superintelligence. Explore VITAgent's research, preprint, and project map.">
   <meta name="theme-color" content="#f3f5f5">
-  <title>VITAgent, Surgical Intelligence</title>
+  <title>VITAgent — Surgical agents for surgical understanding</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
@@ -13,30 +13,42 @@
   <script src="assets/config.js" defer></script>
   <script src="assets/team.js" defer></script>
   <script src="assets/app.js" defer></script>
+  <link rel="canonical" href="https://vitagent.github.io/">
 </head>
-<body>
+<body class="has-section-rail">
   <a class="skip" href="#main">Skip to content</a>
   <header class="top" id="top">
     <div class="wrap top-in">
       <a class="brand" href="./" aria-label="VITAgent home"><span class="dm dm-vita" data-dots="VITAgent" data-label="VITAgent"></span></a>
       <nav aria-label="Main">
-        <a href="#concept">Concept</a>
-        <a href="#pathway">Pathway</a>
-        <a href="#news">News</a>
-        <a href="#artifacts">Artifacts</a>
-        <a href="#team">Team</a>
+        <a href="./" aria-current="page">Home</a>
+        <a href="./explorer/">Explorer</a>
+        <a href="./blog/">Blog</a>
         <a href="https://github.com/VITAgent">GitHub</a>
       </nav>
     </div>
   </header>
+
+  <details class="section-rail" open>
+    <summary>On this page</summary>
+    <nav aria-label="On this page" data-section-nav>
+      <a href="#concept" aria-current="location"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Overview</span></a>
+      <a href="#pathway"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Research map</span></a>
+      <a href="#news"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>News</span></a>
+      <a href="#artifacts"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Projects</span></a>
+      <a href="#explore"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Explore further</span></a>
+      <a href="#team"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Team</span></a>
+    </nav>
+  </details>
 
   <main id="main">
     <section class="hero" id="concept" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-text">
           <h1 id="hero-title"><span class="dm dm-hero dm-vita" data-dots="VITAgent" data-grid data-label="VITAgent"></span></h1>
-          <p class="claim">Surgical Intelligence</p>
-          <p class="lede">Agents that watch an operation, call tools to solve what they cannot alone, and learn from their own attempts.</p>
+          <p class="claim research-headline">Surgical agents for surgical understanding:<span> benchmarking, agentic harness, and recursive surgical superintelligence.</span></p>
+          <p class="lede">We study what generalist models understand about surgery, how tools extend their capabilities, and how agents might improve through their own experience.</p>
+          <div class="reading-links"><a class="link" href="https://arxiv.org/abs/2611.11437">Read the preprint</a><a class="link" href="#pathway">Explore the project map</a></div>
         </div>
         <figure class="scope">
           <div class="scope-disc"><canvas id="matrix" aria-hidden="true"></canvas></div>
@@ -64,28 +76,24 @@
 
     <section class="sec" id="pathway" aria-labelledby="pathway-title">
       <div class="wrap">
-        <h2 class="title" id="pathway-title">Pathway</h2>
-        <div class="gauge">
-          <svg id="gauge" data-progress="0.72" aria-hidden="true"></svg>
-          <div class="gauge-ends"><span>General model</span><span>Surgical competence</span></div>
-        </div>
+        <h2 class="title" id="pathway-title">Research map</h2>
         <ol class="path">
           <li class="done">
             <span class="dm dm-num" data-dots="1" data-grid data-boot aria-hidden="true"></span>
-            <h3>Can a general MLLM understand surgery?</h3>
+            <h3>Benchmarking</h3>
             <p class="desc">We measure what general multimodal models already know about surgery, on their own.</p>
-            <p class="by"><a class="link" href="bench/">SurgKnow-Bench</a><span class="meta">NeurIPS 2026</span></p>
+            <p class="by"><a class="link" href="bench/">SurgKnow-Bench</a><a class="link" href="blog/how-to-train-a-surgeon/#benchmarking">Read the motivation</a><span class="meta">NeurIPS 2026</span></p>
           </li>
           <li class="done">
             <span class="dm dm-num" data-dots="2" data-grid data-boot aria-hidden="true"></span>
-            <h3>Can a general agent understand surgery by using tools?</h3>
+            <h3>Agentic harness</h3>
             <p class="desc">We give the agent tools to perceive the video and retrieve knowledge, and measure how much of the gap it closes.</p>
-            <p class="by"><a class="link" href="gym/">SurgAgentGym</a><a class="link" href="wiki/">SurgWiki</a><a class="link" href="agent/">SurgAgent v1</a><span class="meta">NeurIPS 2026</span></p>
+            <p class="by"><a class="link" href="gym/">SurgAgentGym</a><a class="link" href="wiki/">SurgWiki</a><a class="link" href="agent/">SurgAgent v1</a><a class="link" href="blog/how-to-train-a-surgeon/#harness">Read how it works</a><span class="meta">NeurIPS 2026</span></p>
           </li>
           <li class="now">
             <span class="dm dm-num" data-dots="3" data-grid data-boot aria-hidden="true"></span>
-            <h3>How can it evolve toward surgical competence?</h3>
-            <p class="desc">The agent learns from its own trajectories in the Gym.</p>
+            <h3>Recursive surgical superintelligence</h3>
+            <p class="desc">Our research direction: agents that use their own trajectories to improve how they approach surgical tasks.</p>
             <p class="by"><a class="link" href="evolve/">SurgAgentEvolve</a><a class="link" href="agent/">SurgAgent v2</a><span class="meta">In progress</span></p>
           </li>
         </ol>
@@ -101,7 +109,7 @@
 
     <section class="sec" id="artifacts" aria-labelledby="artifacts-title">
       <div class="wrap">
-        <h2 class="title" id="artifacts-title">Artifacts</h2>
+        <h2 class="title" id="artifacts-title">Projects</h2>
 
         <div class="cards">
           <article class="card feat" data-node="bench">
@@ -110,7 +118,7 @@
               <h3><a href="bench/">SurgKnow-Bench</a></h3>
               <p class="meta">NeurIPS 2026</p>
               <p class="desc">The boundary of generalist models in surgery.</p>
-              <p class="res" data-res="Paper=bench.paper,Code=bench.code,Trajectories=bench.viewer"></p>
+              <p class="res" data-res="Paper=bench.paper,Code=bench.code"></p>
             </div>
           </article>
           <article class="card" data-node="gym">
@@ -141,7 +149,7 @@
             <canvas class="emblem" data-emblem="evolve" aria-hidden="true"></canvas>
             <div class="card-body">
               <h3><a href="evolve/">SurgAgentEvolve</a></h3>
-              <p class="desc">Agents that learn from their own trajectories.</p>
+              <p class="desc">Exploring how agents can learn from their own trajectories.</p>
               <p class="res" data-res="Paper=evolve.paper"></p>
             </div>
           </article>
@@ -150,6 +158,16 @@
         <figure class="system" aria-label="How the artifacts fit together. SurgWiki is part of SurgAgentGym. SurgAgent acts in SurgAgentGym and receives observations. SurgKnow-Bench evaluates agents on top of SurgAgentGym. Trajectories from the Gym feed SurgAgentEvolve, which produces the next SurgAgent.">
           <svg id="system" aria-hidden="true"></svg>
         </figure>
+      </div>
+    </section>
+
+    <section class="sec" id="explore" aria-labelledby="explore-title">
+      <div class="wrap">
+        <h2 class="title" id="explore-title">Explore further</h2>
+        <div class="entry-list">
+          <article><h3><a class="link" href="explorer/">Explorer</a></h3><p>Our viewer and demos, bringing tasks, tool use, and trajectories together.</p><p class="meta">Under construction</p></article>
+          <article><h3><a class="link" href="blog/how-to-train-a-surgeon/">How to “train” a surgeon?</a></h3><p>A companion to the paper: the benchmark, the agentic harness, and what the findings tell us.</p><p class="reading-links"><a class="link" href="blog/">Browse the blog</a><a class="link" href="https://arxiv.org/abs/2611.11437">arXiv:2611.11437</a></p></article>
+        </div>
       </div>
     </section>
 
@@ -166,7 +184,7 @@
     <div class="wrap foot-grid">
       <div class="foot-id">
         <a class="foot-mark" href="./" aria-label="VITAgent home"><span class="dm" data-dots="VITAgent" data-label="VITAgent"></span></a>
-        <p>Surgical Intelligence</p>
+        <p>Surgical agents for surgical understanding</p>
       </div>
       <dl class="foot-links">
         <div data-contact hidden><dt>Contact</dt><dd><a class="link" data-contact-link href="#">email</a></dd></div>
