@@ -223,13 +223,15 @@ Title, one sentence, resource set, then sections that each hold one module (figu
 
 ### November 2026 site structure
 
-The primary navigation is Home, Explorer, Blog, and the public GitHub organization.
+The primary navigation is Home, Explorer, Research, and About us. Research
+combines paper companions and the public GitHub entry; About us shows the team
+and contact information using the existing shared data.
 The home page has a separate side rail for section location, with a 3×3 dot-matrix
 marker; its selected cross and underlined label identify the current section. On
 smaller screens this becomes a collapsible text navigation.
 Home introduces the initiative and maps its research; product pages remain stable
 destinations. Explorer is a separate viewer/demo destination and currently reads
-“Under construction”. Blog holds paper companions, with section links back to the
+“Under construction”. Research holds paper companions and code links, with section links back to the
 relevant projects. Shared concepts connect across these pages rather than becoming
 duplicate project descriptions.
 

@@ -6,11 +6,13 @@ A small, dependency-free website for the VITAgent research initiative.
 
 - `/`: initiative overview, research map, project relationships, news, and team.
 - `/explorer/`: the dedicated viewer/demo destination, currently **Under construction**.
-- `/blog/`: paper companions and research notes.
+- `/research/`: papers, reading companions, and the public GitHub code entry.
+- `/about/`: team and contact, using the shared team data.
+- `/blog/`: compatibility alias for Research; existing article URLs remain stable.
 - `/blog/how-to-train-a-surgeon/`: a reading companion to [arXiv:2611.11437](https://arxiv.org/abs/2611.11437), grounded in the public v1 preprint.
 - `/bench/`, `/gym/`, `/wiki/`, `/agent/`, `/evolve/`: stable project pages, linked to relevant sections of the companion and to Explorer.
 
-The top navigation changes pages. The home page's side navigation locates sections,
+The top navigation is Home, Explorer, Research, and About us. The home page's side navigation locates sections,
 using a dot-matrix indicator for the current section. On smaller screens it becomes
 a collapsible “On this page” navigation.
 
