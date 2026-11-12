@@ -69,6 +69,14 @@
     el.innerHTML = dots(el.dataset.dots, { grid: el.hasAttribute("data-grid"), rows: +el.dataset.rows || ROWS, label: el.dataset.label });
   });
 
+  // Reserve the fixed footer's real height, including wrapped text and font loading.
+  const footer = document.querySelector(".foot");
+  if (footer) {
+    const measureFooter = () => document.documentElement.style.setProperty("--footer-height", `${footer.offsetHeight}px`);
+    measureFooter();
+    new ResizeObserver(measureFooter).observe(footer);
+  }
+
   /* ---------- Nav: raised once scrolled; current section marked ---------- */
   const sectionRail = document.querySelector(".section-rail");
   if (sectionRail) {
@@ -93,14 +101,37 @@
       new ResizeObserver(measureHeader).observe(top);
     }
     if (secs.length && "IntersectionObserver" in window) {
-      const io = new IntersectionObserver((es) => es.forEach((e) => {
-        if (!e.isIntersecting) return;
-        const activeId = e.target.dataset.railTarget || e.target.id;
-        links.forEach((a, i) => {
-          if (secs[i]?.id === activeId) a.setAttribute("aria-current", "location");
+      let activeId;
+      const markLocation = () => {
+        const candidates = links.filter((a, i) => secs[i]?.id === activeId);
+        const current = candidates.find((a) => a.getAttribute("href") === location.hash) || candidates[0];
+        links.forEach((a) => {
+          if (a === current) a.setAttribute("aria-current", "location");
           else a.removeAttribute("aria-current");
         });
+      };
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        activeId = e.target.dataset.railTarget || e.target.id;
+        markLocation();
       }), { rootMargin: "-40% 0px -55% 0px" });
+      // Inner anchors share a screen: target the panel, so News cannot snap to Artifacts.
+      const revealLocation = (behavior = still ? "instant" : "smooth") => {
+        const target = document.getElementById(location.hash.slice(1));
+        const panel = target?.closest(".home-panel");
+        if (panel && panel !== target) panel.scrollIntoView({ behavior, block: "start" });
+      };
+      links.forEach((a) => a.addEventListener("click", (event) => {
+        if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const target = document.querySelector(a.getAttribute("href"));
+        if (!target?.closest(".home-panel") || target.classList.contains("home-panel")) return;
+        event.preventDefault();
+        if (location.hash !== a.getAttribute("href")) history.pushState(null, "", a.getAttribute("href"));
+        revealLocation();
+        markLocation();
+      }));
+      addEventListener("hashchange", () => { revealLocation(); markLocation(); });
+      addEventListener("load", () => requestAnimationFrame(() => revealLocation("instant")), { once: true });
       const observed = new Set([...secs, ...document.querySelectorAll("[data-rail-target]")]);
       observed.forEach((s) => { if (s) io.observe(s); });
     }

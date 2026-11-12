@@ -22,6 +22,7 @@
   --sans: "Geist", system-ui, sans-serif;
   --serif: "Geist Serif", Georgia, serif;
   --mono: "Geist Mono", ui-monospace, monospace;
+  --footer-height: 148px;
   --wrap: 1152px;
   --g: clamp(20px, 4vw, 48px);
   --sec: clamp(96px, 12vw, 128px);
@@ -33,8 +34,8 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
-body { margin: 0; background: var(--surface); color: var(--ink); font: 400 18px/28px var(--serif); -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; scroll-padding-bottom: var(--footer-height); }
+body { padding-bottom: var(--footer-height); margin: 0; background: var(--surface); color: var(--ink); font: 400 18px/28px var(--serif); -webkit-font-smoothing: antialiased; }
 h1, h2, h3, p, figure, ul { margin: 0; }
 h1, h2, h3 { font-family: var(--sans); font-weight: 600; }
 strong { font-weight: 600; }
@@ -226,16 +227,17 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .affs .mark { width: 18px; height: 18px; }
 
 /* Footer */
-.foot { padding: var(--sec) 0 56px; }
-.foot-grid { display: grid; grid-template-columns: 1fr; gap: 40px 48px; }
+.foot { position: fixed; inset: auto 0 0; z-index: 5; padding: 12px 0; background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(10px); }
+.foot-grid { display: grid; grid-template-columns: 1fr auto; gap: 12px 32px; }
+.foot-legal { grid-column: 1 / -1; }
 @media (min-width: 760px) { .foot-grid { grid-template-columns: 1fr auto; } .foot-legal { grid-column: 1 / -1; } }
-.foot-mark { display: block; width: 104px; color: var(--ink); }
-.foot-id p { margin-top: 10px; color: var(--muted); font: 400 14px/20px var(--sans); }
+.foot-mark { display: block; width: 88px; color: var(--ink); }
+.foot-id p { margin-top: 6px; color: var(--muted); font: 400 14px/20px var(--sans); }
 .foot-links { margin: 0; display: grid; gap: 8px; font: 400 14px/20px var(--sans); }
 .foot-links div { display: grid; grid-template-columns: 80px auto; gap: 16px; }
 .foot-links dt { color: var(--muted); }
 .foot-links dd { margin: 0; }
-.foot-legal { display: grid; gap: 4px; font: 400 14px/20px var(--sans); color: var(--muted); max-width: 88ch; }
+.foot-legal { display: grid; gap: 4px; font: 400 14px/20px var(--sans); color: var(--muted); max-width: none; }
 
 /* Project pages */
 .page-hero { padding: clamp(48px, 8vw, 96px) 0 0; }
@@ -320,32 +322,29 @@ nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text
 
 /* Home: five native scroll stops. Content is never clipped or internally scrolled. */
 .home-story { --home-header: 72px; scroll-padding-top: var(--home-header); scroll-snap-type: y proximity; }
-.home-panel { min-height: calc(100svh - var(--home-header)); padding-block: 48px; display: flex; flex-direction: column; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; }
+.home-panel { min-height: calc(100svh - var(--home-header) - var(--footer-height)); padding-block: 48px; display: flex; flex-direction: column; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; }
 .home-panel > .sec { padding-top: 0; }
 .home .system { display: block; margin-top: 0; }
-.home .system svg { max-height: calc(100svh - 240px); }
+.home .system svg { max-height: calc(100svh - var(--home-header) - var(--footer-height) - 120px); }
 .home .pathway-news { gap: 48px; }
 .home .team-panel { gap: 40px; }
-.home .team-panel .foot { padding: 0; }
-.home .foot-grid { gap: 24px 48px; }
-.home .foot-legal { max-width: none; }
 .home .artifacts-system .system { max-width: 1056px; margin-inline: auto; }
 @media (min-width: 900px) {
-  .home .home-panel { padding-block: 32px; }
-  .home .hero { gap: 32px; }
+  .home .home-panel { padding-block: 24px; }
+  .home .hero { gap: 20px; padding-block: 20px; }
   .home .hero-grid { gap: 48px; }
-  .home .scope { width: min(100% - 32px, 34svh, 352px); }
+  .home .scope { width: min(100% - 32px, calc((100svh - var(--home-header) - var(--footer-height)) * .4), 320px); }
   .home .vitals { margin-top: 0; }
   .home .dict { margin-block: 0; }
-  .home .pathway-news { gap: 40px; }
-  .home .title { margin-bottom: 24px; }
+  .home .pathway-news { gap: 32px; }
+  .home .title { margin-bottom: 20px; }
   .home .dm-num { margin-bottom: 16px; }
-  .home .news { max-width: none; gap: 12px; }
+  .home .news { max-width: none; gap: 8px; }
   .home .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .home .card { padding: 20px; gap: 12px; }
-  .home .card .emblem { width: 48px; height: 48px; flex: none; }
-  .home .card.feat { grid-column: span 2; flex-direction: row; align-items: center; gap: 28px; }
-  .home .card.feat .emblem { width: 112px; height: 112px; }
+  .home .card { display: grid; grid-template-columns: 32px minmax(0, 1fr); padding: 20px; gap: 16px; }
+  .home .card .emblem { width: 32px; height: 32px; flex: none; }
+  .home .card.feat { grid-column: span 2; grid-template-columns: 88px minmax(0, 1fr); align-items: center; gap: 24px; }
+  .home .card.feat .emblem { width: 88px; height: 88px; }
   .home .card .desc { margin-top: 8px; }
   .home .card .res { padding-top: 12px; }
   .home .filter { margin-bottom: 24px; }
@@ -358,6 +357,7 @@ nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text
   .home .section-rail nav { gap: 8px; }
 }
 @media (max-width: 899px) {
+  .home-story { scroll-snap-type: none; }
   .home .hero-grid { gap: 48px; }
   .home .vitals { margin-top: 48px; }
   .home .system svg { max-height: none; }
@@ -375,4 +375,14 @@ nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text
 @media (prefers-reduced-motion: reduce) {
   .home-story { scroll-snap-type: none; }
   .news li.new time::after { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .foot { padding-block: 10px; }
+  .foot-grid { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; }
+  .foot-id p { max-width: 18ch; }
+  .foot-links { gap: 4px; }
+  .foot-links div { display: block; }
+  .foot-links dt { display: none; }
+  .foot-links a { overflow-wrap: anywhere; }
 }
