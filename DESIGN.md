@@ -234,8 +234,9 @@ relevant projects. Shared concepts connect across these pages rather than becomi
 duplicate project descriptions.
 
 The existing large animated dot-matrix VITAgent wordmark stays in the hero.
-The headline beneath it is plain Geist text, with the research directions on a
-second line at Heading size. The navigation also retains its wordmark. Paper
+The slogan beneath it is a single plain Geist sentence, with uniform size and
+weight throughout (24/32 desktop, 20/28 mobile). There is no supporting paragraph
+or link row in the hero. The navigation also retains its wordmark. Paper
 announcements and article listings are unboxed text groups using Heading, Body,
 Meta, and text links. Reading navigation is a wrapping list of text links. Article
 headings use plain text for readability; article paragraphs have a 68ch measure.
