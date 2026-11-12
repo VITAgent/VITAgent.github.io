@@ -4,7 +4,7 @@ A small, dependency-free website for the VITAgent research initiative.
 
 ## Pages
 
-- `/`: initiative overview, research map, project relationships, news, and team.
+- `/`: initiative overview, Pathway, project relationships, news, and team.
 - `/explorer/`: the dedicated viewer/demo destination, currently **Under construction**.
 - `/research/`: papers, reading companions, and the public GitHub code entry.
 - `/about/`: team and contact, using the shared team data.
