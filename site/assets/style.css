@@ -240,6 +240,9 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .foot-links dd { margin: 0; }
 .foot-legal { display: grid; gap: 4px; font: 400 14px/20px var(--sans); color: var(--muted); max-width: none; }
 
+.foot-short, .foot-details summary { display: none; }
+.foot-license { display: grid; gap: 4px; }
+
 /* Project pages */
 .page-hero { padding: clamp(48px, 8vw, 96px) 0 0; }
 .page-hero .dm-mono { width: 32px; color: var(--brand); margin-bottom: 32px; }
@@ -376,10 +379,17 @@ nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text
 }
 
 @media (max-width: 640px) {
-  .foot { padding-block: 10px; }
-  .foot-grid { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; }
-  .foot-links { gap: 4px; }
+  .foot { padding: 4px 0 calc(4px + env(safe-area-inset-bottom)); }
+  .foot-grid { grid-template-columns: minmax(0, 1fr) auto; gap: 0 16px; }
+  .foot-id p, .foot-long, .foot-rights { display: none; }
+  .foot-short { display: inline; }
+  .foot-mark { display: flex; align-items: center; width: 80px; min-height: 44px; }
+  .foot-links { display: flex; align-items: center; gap: 16px; }
   .foot-links div { display: block; }
   .foot-links dt { display: none; }
-  .foot-links a { overflow-wrap: anywhere; }
+  .foot-links a { display: flex; align-items: center; min-height: 44px; white-space: nowrap; }
+  .foot-legal { position: relative; display: block; }
+  .foot-copyright { min-height: 28px; padding: 4px 72px 4px 0; }
+  .foot-details summary { position: absolute; top: 0; right: 0; display: list-item; list-style-position: inside; min-height: 28px; padding: 4px 0; color: var(--brand); cursor: pointer; }
+  .foot-license { padding: 8px 0 4px; }
 }

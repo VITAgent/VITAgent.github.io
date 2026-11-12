@@ -72,6 +72,11 @@
   // Reserve the fixed footer's real height, including wrapped text and font loading.
   const footer = document.querySelector(".foot");
   if (footer) {
+    const legal = footer.querySelector(".foot-details");
+    const compactFooter = matchMedia("(max-width: 640px)");
+    const setFooterMode = () => { if (legal) legal.open = !compactFooter.matches; };
+    setFooterMode();
+    compactFooter.addEventListener("change", setFooterMode);
     const measureFooter = () => document.documentElement.style.setProperty("--footer-height", `${footer.offsetHeight}px`);
     measureFooter();
     new ResizeObserver(measureFooter).observe(footer);
@@ -177,7 +182,10 @@
   const mail = typeof V.contact === "string" && /^[^\s@]+@[^\s@]+$/.test(V.contact) ? V.contact : null;
   document.querySelectorAll("[data-contact]").forEach((row) => {
     if (!mail) return;
-    const a = row.querySelector("[data-contact-link]"); a.href = "mailto:" + mail; a.textContent = mail; row.hidden = false;
+    const a = row.querySelector("[data-contact-link]");
+    a.href = "mailto:" + mail;
+    (a.querySelector("[data-contact-address]") || a).textContent = mail;
+    row.hidden = false;
   });
   document.querySelectorAll("[data-year]").forEach((y) => { y.textContent = new Date().getFullYear(); });
 
