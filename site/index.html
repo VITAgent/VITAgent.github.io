@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="home-story">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +15,7 @@
   <script src="assets/app.js" defer></script>
   <link rel="canonical" href="https://vitagent.github.io/">
 </head>
-<body class="has-section-rail">
+<body class="has-section-rail home">
   <a class="skip" href="#main">Skip to content</a>
   <header class="top" id="top">
     <div class="wrap top-in">
@@ -33,15 +33,15 @@
     <summary>On this page</summary>
     <nav aria-label="On this page" data-section-nav>
       <a href="#concept" aria-current="location"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Overview</span></a>
-      <a href="#pathway"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Pathway</span></a>
-      <a href="#news"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>News</span></a>
-      <a href="#artifacts"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Artifacts</span></a>
+      <a href="#pathway"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Pathway + News</span></a>
+      <a href="#artifacts"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Artifacts <small>1 / 2</small></span></a>
+      <a href="#artifacts-system"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Artifacts <small>2 / 2</small></span></a>
       <a href="#team"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Team</span></a>
     </nav>
   </details>
 
   <main id="main">
-    <section class="hero" id="concept" aria-labelledby="hero-title">
+    <section class="hero home-panel" id="concept" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-text">
           <h1 id="hero-title"><span class="dm dm-hero dm-vita" data-dots="VITAgent" data-grid data-label="VITAgent"></span></h1>
@@ -71,37 +71,40 @@
       </div>
     </section>
 
-    <section class="sec" id="pathway" aria-labelledby="pathway-title">
-      <div class="wrap">
-        <h2 class="title" id="pathway-title">Pathway</h2>
-        <ol class="path">
-          <li class="done">
-            <span class="dm dm-num" data-dots="1" data-grid data-boot aria-hidden="true"></span>
-            <h3>Benchmarking</h3>
-            <p class="desc">We measure what general multimodal models already know about surgery, on their own.</p>
-          </li>
-          <li class="done">
-            <span class="dm dm-num" data-dots="2" data-grid data-boot aria-hidden="true"></span>
-            <h3>Agentic harness</h3>
-            <p class="desc">We give the agent tools to perceive the video and retrieve knowledge, and measure how much of the gap it closes.</p>
-          </li>
-          <li class="now">
-            <span class="dm dm-num" data-dots="3" data-grid data-boot aria-hidden="true"></span>
-            <h3>Recursive surgical superintelligence</h3>
-            <p class="desc">Our research direction: agents that use their own trajectories to improve how they approach surgical tasks.</p>
-          </li>
-        </ol>
-      </div>
-    </section>
+    <div class="home-panel pathway-news" id="pathway-panel">
+      <section class="sec" id="pathway" aria-labelledby="pathway-title">
+        <div class="wrap">
+          <h2 class="title" id="pathway-title">Pathway</h2>
+          <ol class="path">
+            <li class="done">
+              <span class="dm dm-num" data-dots="1" data-grid data-boot aria-hidden="true"></span>
+              <h3>Benchmarking</h3>
+              <p class="desc">We measure what general multimodal models already know about surgery, on their own.</p>
+            </li>
+            <li class="done">
+              <span class="dm dm-num" data-dots="2" data-grid data-boot aria-hidden="true"></span>
+              <h3>Agentic harness</h3>
+              <p class="desc">We give the agent tools to perceive the video and retrieve knowledge, and measure how much of the gap it closes.</p>
+            </li>
+            <li class="now">
+              <span class="dm dm-num" data-dots="3" data-grid data-boot aria-hidden="true"></span>
+              <h3>Recursive surgical superintelligence</h3>
+              <p class="desc">Our research direction: agents that use their own trajectories to improve how they approach surgical tasks.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
 
-    <section class="sec" id="news" aria-labelledby="news-title">
-      <div class="wrap">
-        <h2 class="title" id="news-title">News</h2>
-        <ul class="news" id="news-list"></ul>
-      </div>
-    </section>
+      <section class="sec" id="news" aria-labelledby="news-title">
+        <div class="wrap">
+          <h2 class="title" id="news-title">News</h2>
+          <ul class="news" id="news-list"></ul>
+        </div>
+      </section>
 
-    <section class="sec" id="artifacts" aria-labelledby="artifacts-title">
+    </div>
+
+    <section class="sec home-panel artifacts-cards" id="artifacts" aria-labelledby="artifacts-title">
       <div class="wrap">
         <h2 class="title" id="artifacts-title">Artifacts</h2>
 
@@ -149,36 +152,44 @@
           </article>
         </div>
 
+      </div>
+    </section>
+
+    <section class="sec home-panel artifacts-system" id="artifacts-system" aria-labelledby="artifacts-system-title">
+      <div class="wrap">
+        <h2 class="title" id="artifacts-system-title">Artifacts</h2>
         <figure class="system" aria-label="How the artifacts fit together. SurgWiki is part of SurgAgentGym. SurgAgent acts in SurgAgentGym and receives observations. SurgKnow-Bench evaluates agents on top of SurgAgentGym. Trajectories from the Gym feed SurgAgentEvolve, which produces the next SurgAgent.">
           <svg id="system" aria-hidden="true"></svg>
         </figure>
       </div>
     </section>
 
-    <section class="sec" id="team" aria-labelledby="team-title">
-      <div class="wrap">
-        <h2 class="title" id="team-title">Team</h2>
-        <ul class="filter" id="aff-filter" aria-label="Filter by institution"></ul>
-        <ul class="team" id="team-list"></ul>
-      </div>
-    </section>
-  </main>
+    <div class="home-panel team-panel" id="team-panel">
+      <section class="sec" id="team" aria-labelledby="team-title">
+        <div class="wrap">
+          <h2 class="title" id="team-title">Team</h2>
+          <ul class="filter" id="aff-filter" aria-label="Filter by institution"></ul>
+          <ul class="team" id="team-list"></ul>
+        </div>
+      </section>
 
-  <footer class="foot">
-    <div class="wrap foot-grid">
-      <div class="foot-id">
-        <a class="foot-mark" href="./" aria-label="VITAgent home"><span class="dm" data-dots="VITAgent" data-label="VITAgent"></span></a>
-        <p>Surgical agents for surgical understanding</p>
+    <footer class="foot" role="contentinfo">
+      <div class="wrap foot-grid">
+        <div class="foot-id">
+          <a class="foot-mark" href="./" aria-label="VITAgent home"><span class="dm" data-dots="VITAgent" data-label="VITAgent"></span></a>
+          <p>Surgical agents for surgical understanding</p>
+        </div>
+        <dl class="foot-links">
+          <div data-contact hidden><dt>Contact</dt><dd><a class="link" data-contact-link href="#">email</a></dd></div>
+          <div><dt>GitHub</dt><dd><a class="link" href="https://github.com/VITAgent">github.com/VITAgent</a></dd></div>
+        </dl>
+        <div class="foot-legal">
+          <p>© <span data-year>2026</span> VITAgent. All rights reserved.</p>
+          <p>Code, data and models are released under the licences stated in each repository. Surgical datasets and knowledge sources remain with their owners; this site grants no licence to them.</p>
+        </div>
       </div>
-      <dl class="foot-links">
-        <div data-contact hidden><dt>Contact</dt><dd><a class="link" data-contact-link href="#">email</a></dd></div>
-        <div><dt>GitHub</dt><dd><a class="link" href="https://github.com/VITAgent">github.com/VITAgent</a></dd></div>
-      </dl>
-      <div class="foot-legal">
-        <p>© <span data-year>2026</span> VITAgent. All rights reserved.</p>
-        <p>Code, data and models are released under the licences stated in each repository. Surgical datasets and knowledge sources remain with their owners; this site grants no licence to them.</p>
-      </div>
+    </footer>
     </div>
-  </footer>
+  </main>
 </body>
 </html>

@@ -39,7 +39,7 @@ for path, page in pages.items():
 for path in ROOT.rglob("*"):
     if path.is_symlink():
         errors.append(f"Deployment must not contain symlinks: {path}")
-    if path.is_file() and path.suffix.lower() not in {".html", ".css", ".js", ".svg", ".png", ".webp", ".jpg", ".jpeg", ".ico", ".txt"}:
+    if path.is_file() and path.suffix.lower() not in {".html", ".css", ".js", ".svg", ".png", ".webp", ".jpg", ".jpeg", ".ico", ".txt", ".woff2"}:
         errors.append(f"Unexpected deployment file: {path}")
 if errors:
     sys.exit("\n".join(errors))

@@ -1,6 +1,33 @@
 # VITAgent interface guideline
 
-Status: **v0.2. Chapters 1 and 2 confirmed (2026-11-05); 3.4 product card confirmed; the rest is a draft.** Each chapter ends with the decisions to confirm. Nothing here is built yet; the current site will be brought in line once a chapter is confirmed.
+Status: **Implemented site. Current decisions confirmed 2026-11-13.** The current decisions below supersede conflicting details in the older chapter drafts.
+
+## Current decisions — 2026-11-13
+
+- Keep the original dot-matrix VITAgent wordmark and animation. Keep the agreed slogan text, its uniform 24/32 desktop and 20/28 mobile size, and no hero action links.
+- Main navigation: Home, Explorer, Research, About us. Home section names stay Pathway and Artifacts. Pathway explains concepts only; no links or status rows. No Explore further section.
+- Home has five scroll stops: Overview; Pathway + News; Artifacts cards; Artifacts relationship diagram; Team with the footer. Use native document scroll snapping, not wheel interception. Panels have a minimum viewport height and can grow. Narrow/short viewports use proximity snapping; reduced motion disables snapping and animated scrolling.
+- Geist Sans for headings and UI; Geist Serif Regular for prose. Dot-matrix titles remain a brand exception. Serif is self-hosted from geist 1.9.2 with its OFL licence. Its current face has only a regular weight; strong text uses browser-synthesized emphasis rather than claiming a native bold face.
+
+| Role | Desktop size / line | Mobile size / line | Family / weight |
+|---|---|---|---|
+| Page / article title | 40 / 48 | 32 / 40 | Sans 600 |
+| Article section | 32 / 40 | 24 / 32 | Sans 600 |
+| Subsection / featured card | 24 / 32 | 24 / 32 | Sans 600 |
+| Compact card / Pathway | 20 / 26 | 20 / 26 | Sans 600 |
+| Body | 18 / 28 | 18 / 28 | Serif 400 |
+| Supporting prose / inset note | 16 / 24 | 16 / 24 | Serif 400 |
+| UI | 16 / 20–24 | 16 / 20–24 | Sans 400–500 |
+| Meta / static tag | 14 / 20 | 14 / 20 | Sans 400 |
+
+- Core explanations use ink; muted is for dates, roles and supporting metadata. Body links have a persistent thin teal underline. Strong emphasis uses one weight, no extra colour.
+- Static statuses use a neutral rectangular tag (2px radius, 2px 8px padding); interactive institution filters remain buttons. Dates and venues stay plain metadata.
+- Reading-route notes use a 4px neutral inset rule and 16px left padding. Body paragraphs are separated by 24px, list items by 12px, article headings by 16px below and 64px above.
+- The homepage system diagram rearranges vertically on mobile, retaining all existing nodes and relationships.
+
+References: [Geist typography](https://vercel.com/geist/typography), [Geist colours](https://vercel.com/geist/colors), [Geist Serif](https://vercel.com/blog/introducing-geist-serif), [GOV.UK inset text](https://design-system.service.gov.uk/components/inset-text/), [GOV.UK tags](https://design-system.service.gov.uk/components/tag/), [Apple product presentation](https://www.apple.com/iphone-air/), [native scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap).
+
+## Earlier chapter drafts
 
 The guideline has two layers, built in order:
 

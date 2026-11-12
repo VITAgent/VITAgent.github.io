@@ -82,16 +82,25 @@
     const onScroll = () => top.classList.toggle("scrolled", scrollY > 8);
     addEventListener("scroll", onScroll, { passive: true }); onScroll();
     const links = [...document.querySelectorAll('[data-section-nav] a[href^="#"]')];
-    const secs = links.map((a) => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+    const secs = links.map((a) => {
+      const target = document.querySelector(a.getAttribute("href"));
+      return target?.closest(".home-panel") || target;
+    });
+    // Match the sticky header's actual height, including wrapped navigation or zoom.
+    if (document.documentElement.classList.contains("home-story")) {
+      const measureHeader = () => document.documentElement.style.setProperty("--home-header", `${top.offsetHeight}px`);
+      measureHeader();
+      new ResizeObserver(measureHeader).observe(top);
+    }
     if (secs.length && "IntersectionObserver" in window) {
       const io = new IntersectionObserver((es) => es.forEach((e) => {
         if (!e.isIntersecting) return;
-        links.forEach((a) => {
-          if (a.getAttribute("href") === "#" + e.target.id) a.setAttribute("aria-current", "location");
+        links.forEach((a, i) => {
+          if (secs[i] === e.target) a.setAttribute("aria-current", "location");
           else a.removeAttribute("aria-current");
         });
       }), { rootMargin: "-40% 0px -55% 0px" });
-      secs.forEach((s) => io.observe(s));
+      secs.filter(Boolean).forEach((s) => io.observe(s));
     }
   }
 
@@ -379,48 +388,68 @@
   const sys = document.getElementById("system");
   if (sys) {
     const NS = "http://www.w3.org/2000/svg";
-    sys.setAttribute("viewBox", "0 0 900 404");
-    const R = [
-      { id: "bench",  x: 0,   y: 0,   w: 520, h: 68,  name: "SurgKnow-Bench" },
-      { id: "gym",    x: 0,   y: 120, w: 520, h: 228, name: "SurgAgentGym", room: true },
-      { id: "video",  x: 24,  y: 200, w: 224, h: 124, name: "Surgical video", minor: true },
-      { id: "wiki",   x: 272, y: 200, w: 224, h: 124, name: "SurgWiki" },
-      { id: "agent",  x: 680, y: 144, w: 220, h: 96,  name: "SurgAgent" },
-      { id: "evolve", x: 680, y: 320, w: 220, h: 84,  name: "SurgAgentEvolve" }
-    ];
-    const E = [
-      { d: "M680 176 H520", label: "actions", lx: 552, ly: 164 },
-      { d: "M520 212 H680", label: "observations", lx: 552, ly: 236 },
-      { d: "M260 120 V68", label: "" },
-      { d: "M260 348 V362 H680", label: "trajectories", lx: 290, ly: 388, live: true },
-      { d: "M790 320 V240", label: "next version", lx: 804, ly: 284 }
-    ];
-    // Dot textures for the regions: the same dot language as the rest of the page, kept fine enough to read through.
-    let html = `<defs>` +
-      `<pattern id="pd" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pd"/></pattern>` +
-      `<pattern id="pdm" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pdm"/></pattern>` +
-      `<pattern id="pdh" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.5" class="pdh"/></pattern></defs>`;
-    R.forEach((r) => {
-      html += `<g class="reg${r.room ? " room" : ""}${r.minor ? " minor" : ""}" data-r="${r.id}"><rect class="base" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/><rect class="tex" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/>` +
-        `<text class="rn" x="${r.x + 20}" y="${r.y + 34}">${esc(r.name)}</text></g>`;
-    });
-    E.forEach((e, i) => { html += `<path id="sx${i}" class="edge" d="${e.d}"/>` + (e.label ? `<text class="el" x="${e.lx}" y="${e.ly}">${esc(e.label)}</text>` : ""); });
-    sys.innerHTML = html + `<g id="pk"></g>`;
+    const compactSystem = matchMedia("(max-width: 640px)");
+    const drawSystem = () => {
+      const compact = compactSystem.matches;
+      sys.setAttribute("viewBox", compact ? "0 0 360 650" : "0 0 900 404");
+      const R = compact ? [
+        { id: "bench", x: 0, y: 0, w: 360, h: 60, name: "SurgKnow-Bench" },
+        { id: "gym", x: 0, y: 108, w: 360, h: 220, name: "SurgAgentGym", room: true },
+        { id: "video", x: 12, y: 188, w: 164, h: 116, name: "Surgical video", minor: true },
+        { id: "wiki", x: 184, y: 188, w: 164, h: 116, name: "SurgWiki" },
+        { id: "agent", x: 0, y: 418, w: 220, h: 80, name: "SurgAgent" },
+        { id: "evolve", x: 140, y: 562, w: 220, h: 84, name: "SurgAgentEvolve" }
+      ] : [
+        { id: "bench",  x: 0,   y: 0,   w: 520, h: 68,  name: "SurgKnow-Bench" },
+        { id: "gym",    x: 0,   y: 120, w: 520, h: 228, name: "SurgAgentGym", room: true },
+        { id: "video",  x: 24,  y: 200, w: 224, h: 124, name: "Surgical video", minor: true },
+        { id: "wiki",   x: 272, y: 200, w: 224, h: 124, name: "SurgWiki" },
+        { id: "agent",  x: 680, y: 144, w: 220, h: 96,  name: "SurgAgent" },
+        { id: "evolve", x: 680, y: 320, w: 220, h: 84,  name: "SurgAgentEvolve" }
+      ];
+      const E = compact ? [
+        { d: "M72 418 V328", label: "actions", lx: 4, ly: 378 },
+        { d: "M164 328 V418", label: "observations", lx: 176, ly: 378 },
+        { d: "M180 108 V60", label: "" },
+        { d: "M328 328 V562", label: "trajectories", lx: 242, ly: 470, live: true },
+        { d: "M140 604 H56 V498", label: "next version", lx: 68, ly: 548 }
+      ] : [
+        { d: "M680 176 H520", label: "actions", lx: 552, ly: 164 },
+        { d: "M520 212 H680", label: "observations", lx: 552, ly: 236 },
+        { d: "M260 120 V68", label: "" },
+        { d: "M260 348 V362 H680", label: "trajectories", lx: 290, ly: 388, live: true },
+        { d: "M790 320 V240", label: "next version", lx: 804, ly: 284 }
+      ];
+      // Dot textures for the regions: the same dot language as the rest of the page, kept fine enough to read through.
+      let html = `<defs>` +
+        `<pattern id="pd" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pd"/></pattern>` +
+        `<pattern id="pdm" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.25" class="pdm"/></pattern>` +
+        `<pattern id="pdh" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.5" class="pdh"/></pattern></defs>`;
+      R.forEach((r) => {
+        html += `<g class="reg${r.room ? " room" : ""}${r.minor ? " minor" : ""}" data-r="${r.id}"><rect class="base" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/><rect class="tex" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="6"/>` +
+          `<text class="rn" x="${r.x + 20}" y="${r.y + 34}">${esc(r.name)}</text></g>`;
+      });
+      E.forEach((e, i) => { html += `<path id="sx${i}" class="edge" d="${e.d}"/>` + (e.label ? `<text class="el" x="${e.lx}" y="${e.ly}">${esc(e.label)}</text>` : ""); });
+      sys.innerHTML = html + `<g id="pk"></g>`;
 
-    const pk = sys.querySelector("#pk"), packets = [], GAP = 10;
-    E.forEach((e, i) => {
-      const path = sys.querySelector("#sx" + i), L = path.getTotalLength(), n = Math.floor(L / GAP / 5) * 5; // a multiple of the packet spacing, so packets never bunch up at the wrap
-      for (let k = 0; k < n; k += 5) {
-        const c = document.createElementNS(NS, "circle");
-        c.setAttribute("r", "3.6"); c.setAttribute("class", "pk" + (e.live ? " live" : ""));
-        pk.appendChild(c); packets.push({ c, path, n, k });
-      }
-    });
-    const place = () => packets.forEach((p) => { const pt = p.path.getPointAtLength((p.k % p.n) * GAP); p.c.setAttribute("cx", pt.x); p.c.setAttribute("cy", pt.y); });
-    place();
+      const pk = sys.querySelector("#pk"), packets = [], GAP = 10;
+      E.forEach((e, i) => {
+        const path = sys.querySelector("#sx" + i), L = path.getTotalLength(), n = Math.floor(L / GAP / 5) * 5; // a multiple of the packet spacing, so packets never bunch up at the wrap
+        for (let k = 0; k < n; k += 5) {
+          const c = document.createElementNS(NS, "circle");
+          c.setAttribute("r", "3.6"); c.setAttribute("class", "pk" + (e.live ? " live" : ""));
+          pk.appendChild(c); packets.push({ c, path, n, k });
+        }
+      });
+      const place = () => packets.forEach((p) => { const pt = p.path.getPointAtLength((p.k % p.n) * GAP); p.c.setAttribute("cx", pt.x); p.c.setAttribute("cy", pt.y); });
+      place();
+      return { packets, place };
+    };
+    let geometry = drawSystem();
+    compactSystem.addEventListener("change", () => { geometry = drawSystem(); });
     let vis = false, last = 0;
     new IntersectionObserver((es) => { vis = es[0].isIntersecting; }).observe(sys);
-    const step = (now) => { if (vis && now - last > 140) { packets.forEach((p) => p.k++); place(); last = now; } requestAnimationFrame(step); };
+    const step = (now) => { if (vis && now - last > 140) { geometry.packets.forEach((p) => p.k++); geometry.place(); last = now; } requestAnimationFrame(step); };
     if (!still) requestAnimationFrame(step);
 
     const hl = (id, on) => sys.querySelector(`.reg[data-r="${id}"]`)?.classList.toggle("hl", on);

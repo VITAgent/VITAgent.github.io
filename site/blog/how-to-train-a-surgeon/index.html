@@ -54,7 +54,7 @@
             <li><strong>Workflow assessment:</strong> critical-view-of-safety and surgical skill assessment.</li>
           </ul>
           <p>Stage I evaluates direct answers to establish what pretrained models can do on their own. Keeping the task families visible matters: an aggregate score can hide a model that recognizes objects but fails to understand their relations or the procedural context.</p>
-          <p class="meta">Reading route: Section 2 for the benchmark; Appendix C for construction and metrics.</p>
+          <p class="reading-note">Reading route: Section 2 for the benchmark; Appendix C for construction and metrics.</p>
         </section>
         <section id="harness">
           <h2>Then, make evidence accessible</h2>
@@ -65,7 +65,7 @@
             <div><dt>Submit</dt><dd>The agent combines its observations into a final answer. The harness enforces the tool interface and budgets, and records the trajectory.</dd></div>
           </dl>
           <p>The projects have different roles: SurgKnow-Bench defines the evaluation tasks; SurgAgentGym executes the interaction; SurgWiki supplies knowledge; <a class="link" href="../../agent/">SurgAgent</a> is the reference agent. A trajectory connects them by showing what the agent did with the evidence it could access.</p>
-          <p class="meta">Reading route: Sections 3 and 4.1 for tools and the harness; Appendix D for implementation.</p>
+          <p class="reading-note">Reading route: Sections 3 and 4.1 for tools and the harness; Appendix D for implementation.</p>
           <p><a class="link" href="../../explorer/">Explorer</a> will bring the viewer and demos together. It is currently under construction.</p>
         </section>
         <section id="findings">
@@ -73,7 +73,7 @@
           <p>The results show partial surgical competence in pretrained models and task-dependent gains from agentic inference. Improvements are most consistent in perception-heavy recognition tasks. Fine-grained localization, relational understanding, and expert-style assessment remain difficult.</p>
           <p>Two comparisons answer different questions. The across-stage comparison measures the move from direct answers to the full agent setting. The matched tool comparison holds the agent setup and prompts fixed while switching tool access off and on. The latter is the more focused test of the contribution of tools.</p>
           <p>Improvement also needs to be read alongside absolute performance. Likewise, an apparently strong assessment accuracy may reflect common rubric values rather than meaningful agreement with expert judgments. The paper reports task-specific metrics and analyzes these failure modes.</p>
-          <p class="meta">Reading route: Section 2.3 for the diagnostic findings; Section 4.2 and Table 3 for the agent comparisons; Appendix E for extended results.</p>
+          <p class="reading-note">Reading route: Section 2.3 for the diagnostic findings; Section 4.2 and Table 3 for the agent comparisons; Appendix E for extended results.</p>
         </section>
         <section id="next">
           <h2>From evidence use to improvement</h2>
