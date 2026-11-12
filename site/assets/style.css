@@ -34,8 +34,8 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 80px; scroll-padding-bottom: var(--footer-height); }
-body { padding-bottom: var(--footer-height); margin: 0; background: var(--surface); color: var(--ink); font: 400 18px/28px var(--serif); -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { margin: 0; background: var(--surface); color: var(--ink); font: 400 18px/28px var(--serif); -webkit-font-smoothing: antialiased; }
 h1, h2, h3, p, figure, ul { margin: 0; }
 h1, h2, h3 { font-family: var(--sans); font-weight: 600; }
 strong { font-weight: 600; }
@@ -228,7 +228,8 @@ nav a:hover, nav a[aria-current="true"] { color: var(--ink); }
 .affs .mark { width: 18px; height: 18px; }
 
 /* Footer */
-.foot { position: fixed; inset: auto 0 0; z-index: 5; padding: 12px 0; background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(10px); }
+.foot { padding: 12px 0; background: var(--surface); }
+.home-story .foot { position: fixed; inset: auto 0 0; z-index: 5; background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(10px); }
 .foot-grid { display: grid; grid-template-columns: 1fr auto; gap: 12px 32px; }
 .foot-legal { grid-column: 1 / -1; }
 @media (min-width: 760px) { .foot-grid { grid-template-columns: 1fr auto; } .foot-legal { grid-column: 1 / -1; } }
@@ -322,7 +323,8 @@ nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text
 .tag { display: inline-block; padding: 2px 8px; border-radius: 2px; background: var(--dot-off); color: var(--ink); font: 400 14px/20px var(--sans); }
 
 /* Home: five native scroll stops. Content is never clipped or internally scrolled. */
-.home-story { --home-header: 72px; scroll-padding-top: var(--home-header); scroll-snap-type: y proximity; }
+.home-story { --home-header: 72px; scroll-padding-top: var(--home-header); scroll-padding-bottom: var(--footer-height); scroll-snap-type: y proximity; }
+.home-story body { padding-bottom: var(--footer-height); }
 .home-panel { min-height: calc(100svh - var(--home-header) - var(--footer-height)); padding-block: 48px; display: flex; flex-direction: column; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; }
 .home-panel > .sec { padding-top: 0; }
 .home .system { display: block; margin-top: 0; }

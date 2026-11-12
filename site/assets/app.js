@@ -69,7 +69,7 @@
     el.innerHTML = dots(el.dataset.dots, { grid: el.hasAttribute("data-grid"), rows: +el.dataset.rows || ROWS, label: el.dataset.label });
   });
 
-  // Reserve the fixed footer's real height, including wrapped text and font loading.
+  // Compact footers on mobile; only the home page reserves space for a fixed footer.
   const footer = document.querySelector(".foot");
   if (footer) {
     const legal = footer.querySelector(".foot-details");
@@ -77,9 +77,11 @@
     const setFooterMode = () => { if (legal) legal.open = !compactFooter.matches; };
     setFooterMode();
     compactFooter.addEventListener("change", setFooterMode);
-    const measureFooter = () => document.documentElement.style.setProperty("--footer-height", `${footer.offsetHeight}px`);
-    measureFooter();
-    new ResizeObserver(measureFooter).observe(footer);
+    if (document.documentElement.classList.contains("home-story")) {
+      const measureFooter = () => document.documentElement.style.setProperty("--footer-height", `${footer.offsetHeight}px`);
+      measureFooter();
+      new ResizeObserver(measureFooter).observe(footer);
+    }
   }
 
   /* ---------- Nav: raised once scrolled; current section marked ---------- */
