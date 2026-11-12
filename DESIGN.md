@@ -22,6 +22,7 @@ Status: **Implemented site. Current decisions confirmed 2026-11-13.** The curren
 | UI | 16 / 20–24 | 16 / 20–24 | Sans 400–500 |
 | Meta / static tag | 14 / 20 | 14 / 20 | Sans 400 |
 
+- Let short introductions, headings, and card descriptions use their available container width. Do not insert manual heading breaks or narrow character-based caps. Keep short news action labels together; retain the long-form article reading measure.
 - Core explanations use ink; muted is for dates, roles and supporting metadata. Body links have a persistent thin teal underline. Strong emphasis uses one weight, no extra colour.
 - Static statuses use a neutral rectangular tag (2px radius, 2px 8px padding); interactive institution filters remain buttons. Dates and venues stay plain metadata.
 - Reading-route notes use a 4px neutral inset rule and 16px left padding. Body paragraphs are separated by 24px, list items by 12px, article headings by 16px below and 64px above.
